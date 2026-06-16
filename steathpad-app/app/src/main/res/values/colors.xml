@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Support for default themes -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- Premium Warm Light Palette -->
+    <color name="warm_white">#FAF7F2</color>
+    <color name="soft_cream">#F6F1EA</color>
+    <color name="light_sand">#EDE4D8</color>
+    <color name="muted_beige">#DCCFC0</color>
+    <color name="accent_brown">#8C6A52</color>
+
+    <!-- Gradient Colors for Splash -->
+    <color name="splash_gradient_start">#FFFDF9</color>
+    <color name="splash_gradient_center">#F8F3EC</color>
+    <color name="splash_gradient_end">#EEE5D9</color>
+
+    <!-- Dashboard Palette -->
+    <color name="dash_bg">#FAF7F2</color>
+    <color name="dash_surface">#F6F1EA</color>
+    <color name="dash_surface_variant">#EEE5D9</color>
+    <color name="dash_accent">#B08968</color>
+    <color name="dash_text_primary">#2C241E</color>
+    <color name="dash_text_secondary">#7A6F66</color>
+    <color name="dash_search_bg">#F2EBE1</color>
+    <color name="dash_card_bg">#FFFFFF</color>
+    <color name="dash_divider">#E6DFD6</color>
+
+    <!-- Semantic Mapping -->
+    <color name="splash_bg">@color/warm_white</color>
+    <color name="warm_accent">@color/accent_brown</color>
+    <color name="warm_text">#3E342F</color>
+    <color name="warm_text_secondary">#7A6D65</color>
+    <!-- Premium Theme Palette -->
+    <color name="nav_active_bg">#E8E3FF</color>
+    <color name="nav_active_icon">#6C5CE7</color>
+    <color name="nav_inactive_icon">#A09890</color>
+    <color name="fab_caramel">#B08968</color>
 </resources>

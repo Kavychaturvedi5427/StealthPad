@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">StealthPad</string>
+    <string name="splash_title">StealthPad</string>
+    <string name="splash_subtitle">Private. Minimal. Secure.</string>
+    <string name="desc_app_logo">App Logo</string>
+    <string name="year">© 2026 Stealth</string>
+    <string name="version">v1.0.0</string>
+    <string name="tagline">Designed For Stealth</string>
 </resources>
