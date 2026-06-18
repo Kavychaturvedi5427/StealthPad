@@ -2,6 +2,7 @@ package com.kavya.stealthpad.data.Local.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "notes")
@@ -19,11 +20,36 @@ public class NotesModel {
     @ColumnInfo(name = "timestamp")
     private long timestamp;
 
+    @ColumnInfo(name = "category")
+    private String category;
+
+    // Default constructor for Room
+    public NotesModel() {
+    }
+
     // Constructor
+    public NotesModel(String title, String content, long timestamp, String category) {
+        this.title = title;
+        this.content = content;
+        this.timestamp = timestamp;
+        this.category = category;
+    }
+
+    // 3-argument constructor for convenience (e.g. in NotesRepository)
+    @Ignore
     public NotesModel(String title, String content, long timestamp) {
         this.title = title;
         this.content = content;
         this.timestamp = timestamp;
+        this.category = "General";
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public int getId() {
