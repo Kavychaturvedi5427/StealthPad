@@ -26,7 +26,7 @@
             android:exported="false"
             android:theme="@style/Theme.StealthPad" />
 
-        <activity android:name=".ui.notes.AddNotes"
+        <activity android:name=".ui.notes.Notes"
             android:exported="false"
             />
 
