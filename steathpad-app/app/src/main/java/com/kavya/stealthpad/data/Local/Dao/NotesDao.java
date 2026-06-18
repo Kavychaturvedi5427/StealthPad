@@ -15,6 +15,10 @@ public interface NotesDao {
     @Query("select * from notes order by timestamp DESC")
     LiveData<List<NotesModel>> getAllNotes();   // notes table will be observed automatically..
 
+    // fetch recent 5 notes...
+    @Query("select * from notes order by timestamp DESC LIMIT 3")
+    LiveData<List<NotesModel>> getRecentNotes();
+
     @Insert
     void insert(NotesModel notesModel);
 
