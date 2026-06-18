@@ -1,9 +1,12 @@
 package com.kavya.stealthpad.data.repository.Notes;
 
+import androidx.lifecycle.LiveData;
+
 import com.kavya.stealthpad.data.DataModel.NoteVmDao;
 import com.kavya.stealthpad.data.Local.Dao.NotesDao;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -26,8 +29,8 @@ public class NotesRepository {
     }
 
     // storing the notes in the room db...
-    public void saveNote(String title, String content, SavenotesCallback callback) {
-        NotesModel model = new NotesModel(title, content, System.currentTimeMillis());
+    public void saveNote(String title, String content, String category, SavenotesCallback callback) {
+        NotesModel model = new NotesModel(title, content, System.currentTimeMillis(), category);
         executor.execute(()->{
             try {
                 dao.insert(model);
@@ -36,7 +39,14 @@ public class NotesRepository {
                 callback.onError(e);
             }
         });
+    }
 
+    public LiveData<List<NotesModel>> getAllNotes(){
+        return dao.getAllNotes();
+    }
+
+    public LiveData<List<NotesModel>> getRecentNotes(){
+        return dao.getRecentNotes();
     }
 
 
