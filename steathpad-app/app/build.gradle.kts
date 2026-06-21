@@ -67,4 +67,10 @@ dependencies {
     // DI (Hilt Dagger Dependency)
     implementation("com.google.dagger:hilt-android:2.57")
     annotationProcessor("com.google.dagger:hilt-compiler:2.57")
+
+    // Retrofit Dependency...
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
