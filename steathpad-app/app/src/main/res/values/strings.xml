@@ -18,6 +18,27 @@
     <string name="auth_signup_link">Sign Up</string>
     <string name="auth_social_login">Or continue with</string>
 
+    <!-- Auth Dialog -->
+    <string name="auth_dialog_title">Authentication Required</string>
+    <string name="auth_dialog_subtitle">Please enter your PIN to continue</string>
+    <string name="auth_pin_hint">Enter PIN</string>
+    <string name="auth_btn_unlock">Unlock</string>
+    <string name="auth_btn_cancel">Cancel</string>
+
+    <!-- Registration Dialog -->
+    <string name="reg_dialog_title">Create Account</string>
+    <string name="reg_dialog_subtitle">Join StealthPad for a secure experience</string>
+    <string name="reg_name_label">Full Name</string>
+    <string name="reg_name_hint">Enter your full name</string>
+    <string name="reg_email_label">Email Address</string>
+    <string name="reg_email_hint">Enter your email address</string>
+    <string name="reg_pass_label">Password</string>
+    <string name="reg_pass_hint">Create a strong password</string>
+    <string name="reg_confirm_pass_label">Confirm Password</string>
+    <string name="reg_confirm_pass_hint">Repeat your password</string>
+    <string name="reg_btn_signup">Sign Up</string>
+    <string name="reg_footer">Already have an account? Sign In</string>
+
     <!-- Categories -->
     <string name="cat_personal">Personal</string>
     <string name="cat_work">Work</string>
