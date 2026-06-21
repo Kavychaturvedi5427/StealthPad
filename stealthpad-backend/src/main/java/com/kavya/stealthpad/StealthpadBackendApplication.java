@@ -1,4 +1,4 @@
-package com.kavya.stealthpad.stealthpad.backend;
+package com.kavya.stealthpad;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
