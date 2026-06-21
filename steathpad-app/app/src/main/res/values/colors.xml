@@ -43,4 +43,12 @@
     <color name="nav_active_icon">#6C5CE7</color>
     <color name="nav_inactive_icon">#A09890</color>
     <color name="fab_caramel">#B08968</color>
+
+    <!-- Auth Dialog Schema -->
+    <color name="auth_dialog_bg">@color/dash_card_bg</color>
+    <color name="auth_title">@color/dash_text_primary</color>
+    <color name="auth_subtitle">@color/dash_text_secondary</color>
+    <color name="auth_input_bg">@color/dash_search_bg</color>
+    <color name="auth_primary_btn">@color/warm_accent</color>
+    <color name="auth_secondary_btn">@color/dash_text_secondary</color>
 </resources>
