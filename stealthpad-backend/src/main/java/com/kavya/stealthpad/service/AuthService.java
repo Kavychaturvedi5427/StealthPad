@@ -30,10 +30,13 @@ public class AuthService {
         }
 
         // creating new user and saving it to the database
+        System.out.println("User password before encoding: " + registerDto.getPassword()); // Debugging line
         User user = new User();
         user.setName(registerDto.getName());
         user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPass()));
+        String encodedPassword = passwordEncoder.encode(registerDto.getPassword ());
+        System.out.println("Encoded Password: " + encodedPassword); // Debugging line
+        user.setPassword(encodedPassword);
 
         userRepository.save(user);
 
