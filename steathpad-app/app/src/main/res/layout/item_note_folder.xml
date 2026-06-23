@@ -113,21 +113,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:alpha="0.6"
+                    android:alpha="1.0"
                     android:fontFamily="sans-serif-light"
                     android:text="Today, 10:45 AM"
                     android:textColor="@color/dash_text_secondary"
                     android:textSize="12sp" />
 
-                <TextView
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/category_chip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:fontFamily="@font/lexend"
+                    android:textColor="@color/white"
                     android:layout_alignParentEnd="true"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="OPEN"
-                    android:textColor="@color/dash_accent"
-                    android:textSize="12sp"
-                    android:letterSpacing="0.05" />
+                    app:chipBackgroundColor="@color/warm_accent"
+                    app:chipCornerRadius="8dp"
+                    app:chipMinHeight="24dp"
+                    app:ensureMinTouchTargetSize="false"
+                    />
             </RelativeLayout>
 
         </LinearLayout>

@@ -27,6 +27,8 @@
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
+                android:clickable="true"
+                android:focusable="true"
                 app:strokeColor="#0D000000"
                 app:strokeWidth="1dp">
 
@@ -39,10 +41,36 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnDeleteNote"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_toStartOf="@id/btnSaveNote"
+                android:layout_marginEnd="12dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:strokeColor="#0D000000"
+                app:strokeWidth="1dp"
+                tools:visibility="invisible">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="12dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    app:tint="#E53935" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnSaveNote"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="@color/dash_accent"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp">
@@ -72,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:fontFamily="sans-serif-light"
-            android:text="Monday, 20 May • 10:30 AM"
+            android:text="--- --- ---"
             android:textColor="@color/dash_text_secondary"
             android:textSize="12sp" />
 
@@ -179,6 +207,7 @@
 
     <!-- Bottom Formatting Tools (Optional / Placeholder) -->
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/navbar"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_gravity="bottom"
@@ -228,13 +257,15 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/star_progress_indeterminate"
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loading_indicator"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:visibility="gone"
-        />
+        app:indicatorSize="48dp"
+        app:trackThickness="4dp"
+        android:indeterminate="true"
+        android:layout_gravity="center"/>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
