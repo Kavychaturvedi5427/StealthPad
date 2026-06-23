@@ -63,6 +63,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.airbnb.android:lottie:$lottieVersion")
+    implementation("com.google.android.material:material:1.14.0")
 
     // DI (Hilt Dagger Dependency)
     implementation("com.google.dagger:hilt-android:2.57")

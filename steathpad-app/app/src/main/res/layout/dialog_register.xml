@@ -225,6 +225,16 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/loading_indicator"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:visibility="invisible"
+                app:indicatorSize="48dp"
+                app:trackThickness="4dp"
+                android:indeterminate="true"
+                android:layout_gravity="center_horizontal"/>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
