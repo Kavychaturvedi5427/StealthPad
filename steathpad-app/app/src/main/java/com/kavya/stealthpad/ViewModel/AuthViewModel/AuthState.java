@@ -3,7 +3,8 @@ package com.kavya.stealthpad.ViewModel.AuthViewModel;
 import com.kavya.stealthpad.data.DataModel.AuthResponseDto;
 
 public abstract class AuthState {
-    public static class Idle extends AuthState {}
+    public static class LoggedIn extends AuthState {}
+    public static class LoggedOut extends AuthState{}
     public static class Loading extends AuthState {}
     public static class Success extends AuthState {
         private AuthResponseDto authResponseDto;

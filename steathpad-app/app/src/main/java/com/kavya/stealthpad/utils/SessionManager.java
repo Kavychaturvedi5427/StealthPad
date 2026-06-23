@@ -21,6 +21,13 @@ public class SessionManager {
                 .putString("email", email)
                 .apply();
     }
+
+    public boolean isLoggedIn(){
+        String jwt = getToken();
+        return jwt != null  && !jwt.isEmpty();
+    }
+
+
     public String getToken() {
         return prefs.getString("jwt", null);
     }

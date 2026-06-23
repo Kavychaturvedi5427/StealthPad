@@ -10,6 +10,7 @@ import com.kavya.stealthpad.data.DataModel.AuthResponseDto;
 import com.kavya.stealthpad.data.DataModel.LoginRequestDTO;
 import com.kavya.stealthpad.data.DataModel.RegisterRequestDTO;
 import com.kavya.stealthpad.data.repository.Auth.AuthRepository;
+import com.kavya.stealthpad.utils.SessionManager;
 
 import javax.inject.Inject;
 
@@ -34,6 +35,7 @@ public class AuthViewModel extends ViewModel {
         this.authRepository = repo;
     }
     public void login(String em, String ps){
+        authState.setValue(new AuthState.Loading());
         LoginRequestDTO loginRequest = new LoginRequestDTO(em, ps);
         authRepository.login(loginRequest).enqueue(new Callback<AuthResponseDto>() { // enqueue the login call in the task stack..
             @Override
@@ -53,17 +55,12 @@ public class AuthViewModel extends ViewModel {
         });
     }
     public void register(String name, String em, String ps){
-        Log.d("REGISTER", "Register method called");
+        authState.setValue(new AuthState.Loading());
         RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(name, em, ps);
         authRepository.register(registerRequestDTO).enqueue(new Callback<AuthResponseDto>() {
             @Override
             public void onResponse(Call<AuthResponseDto> call, Response<AuthResponseDto> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d("REGISTER",
-                            "Response Code = " + response.code());
-
-                    Log.d("REGISTER",
-                            "Response Body = " + response.body());
                     authState.setValue(new AuthState.Success(response.body()));
                 } else {
 
@@ -73,12 +70,18 @@ public class AuthViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<AuthResponseDto> call, Throwable throwable) {
-                Log.e("REGISTER",
-                        "Error",
-                        throwable);
                 authState.setValue(new AuthState.Error(throwable.getMessage()));
             }
         });
+    }
+
+    public void checkAuth(SessionManager sessionManager){
+        if(sessionManager.isLoggedIn()){
+            authState.setValue(new AuthState.LoggedIn());
+        }
+        else{
+            authState.setValue(new AuthState.LoggedOut());
+        }
     }
 
 }

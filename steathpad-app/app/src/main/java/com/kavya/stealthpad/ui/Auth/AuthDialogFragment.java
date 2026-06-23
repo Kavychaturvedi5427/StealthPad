@@ -12,12 +12,15 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kavya.stealthpad.R;
 import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthState;
 import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthViewModel;
+import com.kavya.stealthpad.data.DataModel.AuthResponseDto;
+import com.kavya.stealthpad.utils.SessionManager;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -25,19 +28,23 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class AuthDialogFragment extends DialogFragment {
 
     private AuthViewModel authViewModel;
+    private CircularProgressIndicator progressindi;
+    private MaterialButton unlock;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         View view = inflater.inflate(R.layout.dialog_auth, container, false);
 
+        unlock = view.findViewById(R.id.btn_unlock);
+        progressindi = view.findViewById(R.id.loading_indicator);
         TextInputEditText email_inp = view.findViewById(R.id.email_input);
         TextInputEditText pass_inp = view.findViewById(R.id.password_input);
         TextInputLayout email_lay = view.findViewById(R.id.email_lay);
         TextInputLayout pass_lay = view.findViewById(R.id.pass_lay);
 
-        view.findViewById(R.id.btn_unlock).setOnClickListener(v1 -> {
+        unlock.setOnClickListener(v1 -> {
             String email = email_inp.getText().toString().trim();
             String pass = pass_inp.getText().toString().trim();
 
@@ -60,15 +67,7 @@ public class AuthDialogFragment extends DialogFragment {
             dia.show(getParentFragmentManager(), "REGISTER_Dia");
         });
 
-        authViewModel.getAuthState().observe(getViewLifecycleOwner(), state -> {
-            if (state instanceof AuthState.Success) {
-
-                dismiss();
-            } else if (state instanceof AuthState.Error) {
-                Toast.makeText(getContext(), ((AuthState.Error) state).getError(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        // observing and updating the ui based on the changes in the states.....
         observeAuthState();
         return view;
     }
@@ -80,28 +79,47 @@ public class AuthDialogFragment extends DialogFragment {
                 state -> {
 
                     if(state instanceof AuthState.Loading){
-
+                        showLoading();
                     }
                     else if(state instanceof AuthState.Success){
+                        hideLoading();
+                        Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show();
 
+                        // storing the jwt in the sharedprefs so that user is logged in even after closing the app..
+                        AuthResponseDto authResponseDto = ((AuthState.Success) state).getAuthResponseDto();
+                        handleSuccess(authResponseDto);
                         dismiss(); // close dialog
 
                     }
                     else if(state instanceof AuthState.Error){
-
+                        hideLoading();
                         dismiss();
                         String error =
                                 ((AuthState.Error) state)
                                         .getError();
-
-                        Snackbar.make(
-                                requireView(),
-                                error,
-                                Snackbar.LENGTH_SHORT
-                        ).show();
+                        Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
+    }
+
+    private void handleSuccess(AuthResponseDto authResponseDto){
+        SessionManager sessionManager = new SessionManager(requireContext());
+        sessionManager.saveUser(authResponseDto.getJwt(),
+                authResponseDto.getName(),
+                authResponseDto.getEmail()
+                );
+        authViewModel.checkAuth(sessionManager);
+    }
+
+    private void showLoading() {
+        progressindi.setVisibility(View.VISIBLE);
+        unlock.setEnabled(false);
+    }
+
+    private void hideLoading() {
+        progressindi.setVisibility(View.GONE);
+        unlock.setEnabled(true);
     }
 
 

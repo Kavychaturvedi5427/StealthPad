@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kavya.stealthpad.R;
@@ -30,13 +31,18 @@ public class RegisterDialogFragment extends DialogFragment {
 
     private AuthViewModel authViewModel;
     private MaterialButton register_btn;
+    private View view;
+
+    private CircularProgressIndicator progessIndi;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.dialog_register, container, false);
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        view = inflater.inflate(R.layout.dialog_register, container, false);
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+
+        progessIndi = view.findViewById(R.id.loading_indicator);
 
         register_btn = view.findViewById(R.id.btn_register);
         register_btn.setOnClickListener(v->{
@@ -86,12 +92,18 @@ public class RegisterDialogFragment extends DialogFragment {
     private void observeAuthState(){
         authViewModel.getAuthState().observe(getViewLifecycleOwner(), state->{
             if(state instanceof AuthState.Loading){
-                // show loading bar...
+                showLoading();
             }
             else if(state instanceof AuthState.Success){
                 AuthResponseDto authResponseDto = ((AuthState.Success) state).getAuthResponseDto();
                 handleSuccess(authResponseDto);
+                Toast.makeText(requireContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
+                hideLoading();
+                dismiss();
             } else if (state instanceof AuthState.Error) {
+                hideLoading();
+                String mess = ((AuthState.Error) state).getError();
+                Toast.makeText(requireContext(), mess, Toast.LENGTH_SHORT).show();
                 String message = ((AuthState.Error) state).getError();
                 Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show();
             }
@@ -104,9 +116,17 @@ public class RegisterDialogFragment extends DialogFragment {
                 authResponseDto.getName(),
                 authResponseDto.getEmail()
                 );
+        authViewModel.checkAuth(sessionManager);
+    }
 
-        Snackbar.make(requireView(), authResponseDto.getMessage(), Snackbar.LENGTH_SHORT).show();
+    private void showLoading() {
+        progessIndi.setVisibility(View.VISIBLE);
+        register_btn.setEnabled(false);
+    }
 
+    private void hideLoading() {
+        progessIndi.setVisibility(View.GONE);
+        register_btn.setEnabled(true);
     }
 
     // this is to make the container that is holding the dialog box transparent

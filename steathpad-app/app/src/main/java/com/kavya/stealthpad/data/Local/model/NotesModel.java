@@ -23,16 +23,28 @@ public class NotesModel {
     @ColumnInfo(name = "category")
     private String category;
 
+    @ColumnInfo(name = "user_email")
+    private String userEmail;
+
     // Default constructor for Room
     public NotesModel() {
     }
 
     // Constructor
-    public NotesModel(String title, String content, long timestamp, String category) {
+    public NotesModel(String title, String content, long timestamp, String category, String userEmail) {
         this.title = title;
         this.content = content;
         this.timestamp = timestamp;
         this.category = category;
+        this.userEmail = userEmail;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     // 3-argument constructor for convenience (e.g. in NotesRepository)
