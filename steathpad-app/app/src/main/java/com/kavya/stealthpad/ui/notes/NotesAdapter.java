@@ -1,8 +1,10 @@
 package com.kavya.stealthpad.ui.notes;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,12 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kavya.stealthpad.R;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
-
-import java.text.SimpleDateFormat;
+import com.kavya.stealthpad.utils.DateTimeUtils;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder>{
 
@@ -41,13 +41,20 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
-        // here we bind the data to the layout...
+
         NotesModel note = notes.get(position);
         holder.title.setText(note.getTitle());
         holder.preview.setText(note.getContent());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        holder.date.setText(DateTimeUtils.formatTimestamp(note.getTimestamp()));
+        holder.category.setText(note.getCategory());
 
-        holder.date.setText(formatter.format(new Date(note.getTimestamp())));
+        // updation feature...
+        holder.itemView.setOnClickListener(v->{
+            // moving to the notes activity to allow the user so that they can update the note...
+            Intent intent = new Intent(v.getContext(), Notes.class);
+            intent.putExtra("NOTE_ID", note.getId());
+            v.getContext().startActivity(intent);
+        });
 
     }
 
@@ -61,11 +68,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         TextView title;
         TextView preview;
         TextView date;
+        TextView category;
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.note_title);
             this.preview = itemView.findViewById(R.id.note_content);
             this.date = itemView.findViewById(R.id.note_date);
+            this.category = itemView.findViewById(R.id.category_chip);
         }
     }
 
