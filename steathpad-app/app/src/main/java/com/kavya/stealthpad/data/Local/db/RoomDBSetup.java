@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.kavya.stealthpad.data.Local.Dao.NotesDao;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
 
-@Database(entities = {NotesModel.class}, version = 1, exportSchema = false)
+@Database(entities = {NotesModel.class}, version = 2, exportSchema = false)
 public abstract class RoomDBSetup extends RoomDatabase {
     public static final String DB_NAME = "Notes_Room";
 
