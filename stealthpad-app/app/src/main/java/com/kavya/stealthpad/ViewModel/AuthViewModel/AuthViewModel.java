@@ -84,4 +84,8 @@ public class AuthViewModel extends ViewModel {
         }
     }
 
+    public void resetState(){
+        authState.setValue(new AuthState.Idle());
+    }
+
 }

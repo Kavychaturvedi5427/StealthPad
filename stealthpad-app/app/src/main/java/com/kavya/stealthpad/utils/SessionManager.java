@@ -27,6 +27,11 @@ public class SessionManager {
         return jwt != null  && !jwt.isEmpty();
     }
 
+    public void logout(){
+        // remove the session stored in the SessionManager class....
+        prefs.edit().clear().apply();
+    }
+
 
     public String getToken() {
         return prefs.getString("jwt", null);
@@ -39,9 +44,4 @@ public class SessionManager {
     public String getEmail() {
         return prefs.getString("email", null);
     }
-
-    public void logout() {
-        prefs.edit().clear().apply();
-    }
-
 }
