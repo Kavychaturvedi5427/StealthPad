@@ -3,7 +3,10 @@ package com.kavya.stealthpad.ui.dashboard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.kavya.stealthpad.R;
@@ -19,11 +23,13 @@ import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthViewModel;
 import com.kavya.stealthpad.ViewModel.NotesViewModel.NotesViewModel;
 import com.kavya.stealthpad.databinding.DashboardBinding;
 import com.kavya.stealthpad.ui.Auth.AuthDialogFragment;
+import com.kavya.stealthpad.ui.Auth.ProfileDialog;
 import com.kavya.stealthpad.ui.notes.AllNotes;
 import com.kavya.stealthpad.ui.notes.Notes;
 import com.kavya.stealthpad.ui.notes.NotesAdapter;
 import com.kavya.stealthpad.utils.SessionManager;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -36,9 +42,11 @@ public class DashboardActivity extends AppCompatActivity {
     private AuthViewModel authViewModel;
     private NotesAdapter adapterRecentNotes, adapterAllNotes;
     private RecyclerView recyclerViewRecent, recyclerViewAllNotes;
-    private ShapeableImageView authbtn;
+    private ShapeableImageView authimg;
+    private FrameLayout authbtn;
     private SessionManager sessionManager;
-    private TextView ViewAll, greetingText;
+    private TextView ViewAll, greetingText, empty_txt;
+    private LottieAnimationView emptyStateAnimation, authbtnLottie;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,13 +61,20 @@ public class DashboardActivity extends AppCompatActivity {
 
         add = binding.btnAddNewNote;
         recyclerViewRecent = binding.recyclerViewNotes;
-        authbtn = binding.auth;
+        authbtn = binding.authbtn;
         ViewAll = binding.btnViewAll;
         greetingText = binding.greetingText;
+        empty_txt = binding.emptyTxt;
+        emptyStateAnimation = binding.empty;
+        authbtnLottie = binding.profileAnimation;
+        authimg = binding.authImg;
 
         // setting the name of the logged in user on the dashboard..
-        String name = sessionManager.getName().split(" ")[0]; // this will give the array of the string name and from that we need to get the first name that is at 0th index...
-        greetingText.setText(getGreeting() + name);
+        String fullName = sessionManager.getName(); // this will give the array of the string name and from that we need to get the first name that is at 0th index...
+        if (fullName != null) {
+            String firstname = fullName.split(" ")[0];
+            greetingText.setText(getGreeting() + firstname);
+        }
 
         // creating adapters for recycler view....
         adapterRecentNotes = new NotesAdapter(R.layout.item_note_folder);
@@ -70,20 +85,35 @@ public class DashboardActivity extends AppCompatActivity {
         recyclerViewRecent.setAdapter(adapterRecentNotes);
 
         add.setOnClickListener(v -> {
-            startActivity(new Intent(this, Notes.class));
+            if(!sessionManager.isLoggedIn()){
+                Toast.makeText(this, "Please login to create note", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                startActivity(new Intent(this, Notes.class));
+            }
+            
         });
 
 
         /*
          * ------------------------------------------------ Auth Section -----------------------------------------
          */
-        authbtn.setOnClickListener(v->{
-            showLoginDialog();
+        authbtn.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                showProfileDialog();
+            } else {
+                showLoginDialog();
+            }
         });
 
-        ViewAll.setOnClickListener(v->{
-            AllNotes allnotes = new AllNotes();
-            allnotes.show(getSupportFragmentManager(), "ALL_NOTES");
+        ViewAll.setOnClickListener(v -> {
+            if(!sessionManager.isLoggedIn()){
+                Toast.makeText(this,"Please login to access notes", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                AllNotes allnotes = new AllNotes();
+                allnotes.show(getSupportFragmentManager(), "ALL_NOTES");
+            }
         });
 
         // making sure that before loading notes the user is logged in...
@@ -94,45 +124,98 @@ public class DashboardActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(getResources().getColor(R.color.dash_bg, getTheme()));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        authViewModel.checkAuth(sessionManager);
+    }
+
     private void observeState() {
-        authViewModel.getAuthState().observe(this, state ->{
-            if(state instanceof AuthState.LoggedIn){
+        authViewModel.getAuthState().observe(this, state -> {
+            if (state instanceof AuthState.LoggedIn) {
+                authimg.setVisibility(View.GONE);
+                authbtnLottie.setVisibility(View.VISIBLE);
+                updateGreeting();
                 loadnotes();
             } else if (state instanceof AuthState.LoggedOut) {
-                showLoginDialog();
+                greetingText.setText(
+                        getGreeting() + "User"
+                );
+                adapterRecentNotes.setNotes(new ArrayList<>());
+                adapterRecentNotes.notifyDataSetChanged();
+                authimg.setImageResource(R.mipmap.ic_launcher_foreground);
+                emptyStateAnimation.setVisibility(View.VISIBLE);
+                emptyStateAnimation.setAnimation(R.raw.login);
+                empty_txt.setVisibility(View.VISIBLE);
+                empty_txt.setText("Please login to access notes");
             }
         });
     }
 
-    private void loadnotes(){
+    private void loadnotes() {
         // fetching the email based on the user logged in...
-       String email = sessionManager.getEmail();
+        String email = sessionManager.getEmail();
 
-       // this will setup the observer for the notes, whenever any note is added or deleted it will automatically update..
-       notesViewModel.getRecentNotes(email).observe(this, notes->{
-           adapterRecentNotes.setNotes(notes);
-           adapterRecentNotes.notifyDataSetChanged();
-       });
+        // this will setup the observer for the notes, whenever any note is added or deleted it will automatically update..
+        notesViewModel.getRecentNotes(email).observe(this, notes -> {
+            if (notes == null || notes.isEmpty()) {
+
+                empty_txt.setVisibility(View.VISIBLE);
+                emptyStateAnimation.setVisibility(View.VISIBLE);
+
+                recyclerViewRecent.setVisibility(View.GONE);
+
+            } else {
+                empty_txt.setVisibility(View.GONE);
+                emptyStateAnimation.setVisibility(View.GONE);
+
+                recyclerViewRecent.setVisibility(View.VISIBLE);
+
+                adapterRecentNotes.setNotes(notes);
+                adapterRecentNotes.notifyDataSetChanged();
+            }
+        });
     }
 
-    private void showLoginDialog(){
+    private void showLoginDialog() {
         AuthDialogFragment authDialogFragment = new AuthDialogFragment();
         authDialogFragment.show(getSupportFragmentManager(), "Auth_Dia");
     }
 
+    private void showProfileDialog() {
+        ProfileDialog profileDialog = new ProfileDialog();
+        profileDialog.show(getSupportFragmentManager(), "Profile_Dia");
+    }
+
+
     // method for getting the greeting text based on the time of the day...
-    private String getGreeting(){
+    private String getGreeting() {
 
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 
-        if(hour < 12){
+        if (hour < 12) {
             return "Good Morning, ";
-        }
-        else if(hour < 17){
+        } else if (hour < 17) {
             return "Good Afternoon, ";
-        }
-        else{
+        } else {
             return "Good Evening, ";
+        }
+    }
+
+    private void updateGreeting() {
+
+        String fullName = sessionManager.getName();
+
+        if (fullName != null && !fullName.isEmpty()) {
+
+            String firstname = fullName.split(" ")[0];
+
+            greetingText.setText(
+                    getGreeting() + firstname
+            );
+
+        } else {
+            greetingText.setText(getGreeting() + "User");
         }
     }
 
