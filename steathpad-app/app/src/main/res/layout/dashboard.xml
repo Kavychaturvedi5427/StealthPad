@@ -51,17 +51,32 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/auth"
+                <FrameLayout
+                    android:id="@+id/authbtn"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:padding="2dp"
-                    android:src="@mipmap/ic_launcher_foreground"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeColor="@color/dash_accent"
-                    app:strokeWidth="1.5dp" />
+                    android:layout_centerVertical="true">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/auth_img"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@mipmap/ic_launcher_foreground"
+                        app:shapeAppearanceOverlay="@style/CircleImage"
+                        app:strokeColor="@color/dash_accent"
+                        app:strokeWidth="1.5dp"/>
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/profileAnimation"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:visibility="gone"
+                        app:lottie_rawRes="@raw/useravatar"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"/>
+
+                </FrameLayout>
 
             </RelativeLayout>
 
@@ -111,6 +126,31 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_note_folder"
                 tools:itemCount="3" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/empty"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                android:layout_margin="15dp"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                />
+
+            <TextView
+                android:id="@+id/empty_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your vault is empty"
+                android:textSize="13sp"
+                android:fontFamily="@font/lexend"
+                android:textColor="@color/dash_accent"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                />
+
+
 
 
         </LinearLayout>
