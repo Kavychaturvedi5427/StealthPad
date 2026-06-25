@@ -13,14 +13,34 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="32dp">
+            android:paddingHorizontal="19dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="32dp">
+
+            <!-- Close Button Header -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_close_register"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="start"
+                    app:icon="@android:drawable/ic_menu_close_clear_cancel"
+                    app:iconTint="@color/dash_text_secondary" />
+            </FrameLayout>
 
             <!-- Logo Container -->
             <com.google.android.material.card.MaterialCardView

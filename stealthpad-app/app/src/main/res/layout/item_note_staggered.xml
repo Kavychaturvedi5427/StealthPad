@@ -9,7 +9,7 @@
     app:cardBackgroundColor="@color/auth_dialog_bg"
     app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
-    app:strokeColor="@color/dash_divider"
+    app:strokeColor="@color/warm_white"
     android:clickable="true"
     android:focusable="true"
     app:strokeWidth="1dp">
