@@ -44,6 +44,8 @@ public class RegisterDialogFragment extends DialogFragment {
 
         progessIndi = view.findViewById(R.id.loading_indicator);
 
+        view.findViewById(R.id.btn_close_register).setOnClickListener(v -> dismiss());
+
         register_btn = view.findViewById(R.id.btn_register);
         register_btn.setOnClickListener(v->{
             Log.d("REGISTER", "Button clicked");

@@ -44,6 +44,8 @@ public class AuthDialogFragment extends DialogFragment {
         TextInputLayout email_lay = view.findViewById(R.id.email_lay);
         TextInputLayout pass_lay = view.findViewById(R.id.pass_lay);
 
+        view.findViewById(R.id.btn_close_auth).setOnClickListener(v -> dismiss());
+
         unlock.setOnClickListener(v1 -> {
             String email = email_inp.getText().toString().trim();
             String pass = pass_inp.getText().toString().trim();
@@ -88,16 +90,19 @@ public class AuthDialogFragment extends DialogFragment {
                         // storing the jwt in the sharedprefs so that user is logged in even after closing the app..
                         AuthResponseDto authResponseDto = ((AuthState.Success) state).getAuthResponseDto();
                         handleSuccess(authResponseDto);
+                        // recreate the dashboard for the user
+                        requireActivity().recreate();
+                        authViewModel.resetState();
                         dismiss(); // close dialog
 
                     }
                     else if(state instanceof AuthState.Error){
                         hideLoading();
-                        dismiss();
                         String error =
                                 ((AuthState.Error) state)
                                         .getError();
                         Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show();
+                        authViewModel.resetState();
                     }
                 }
         );
