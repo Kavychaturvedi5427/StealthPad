@@ -40,8 +40,8 @@ public class DashboardActivity extends AppCompatActivity {
     private FloatingActionButton add;
     private NotesViewModel notesViewModel;
     private AuthViewModel authViewModel;
-    private NotesAdapter adapterRecentNotes, adapterAllNotes;
-    private RecyclerView recyclerViewRecent, recyclerViewAllNotes;
+    private NotesAdapter adapterRecentNotes;
+    private RecyclerView recyclerViewRecent;
     private ShapeableImageView authimg;
     private FrameLayout authbtn;
     private SessionManager sessionManager;
@@ -69,7 +69,7 @@ public class DashboardActivity extends AppCompatActivity {
         authbtnLottie = binding.profileAnimation;
         authimg = binding.authImg;
 
-        // setting the name of the logged in user on the dashboard..
+        // setting the name of the logged in user on the dashboard...
         String fullName = sessionManager.getName(); // this will give the array of the string name and from that we need to get the first name that is at 0th index...
         if (fullName != null) {
             String firstname = fullName.split(" ")[0];
@@ -80,7 +80,7 @@ public class DashboardActivity extends AppCompatActivity {
         adapterRecentNotes = new NotesAdapter(R.layout.item_note_folder);
 //        adapterAllNotes = new NotesAdapter(R.layout.item_note_preview);
 
-        // setting adapters to the recycler view..
+        // setting adapters to the recycler view...
         recyclerViewRecent.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewRecent.setAdapter(adapterRecentNotes);
 
