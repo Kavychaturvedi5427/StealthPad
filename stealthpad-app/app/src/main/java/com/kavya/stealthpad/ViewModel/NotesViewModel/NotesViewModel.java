@@ -33,7 +33,8 @@ public class NotesViewModel extends ViewModel {
             notesState.setValue(new NotesState.ErrorState("Title can't be empty."));
             return;
         }
-        repo.saveNote(title, content, category, email, new NotesRepository.SavenotesCallback() {
+        NotesModel model = new NotesModel(title, content, System.currentTimeMillis(), category, email);
+        repo.saveNote(model, new NotesRepository.SavenotesCallback() {
             @Override
             public void onSuccess() {
                 notesState.postValue(new NotesState.SuccessState());
