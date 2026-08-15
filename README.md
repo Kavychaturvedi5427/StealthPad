@@ -1,4 +1,4 @@
-```markdown
+
 # StealthPad
 
 A private, offline-first notes application powered by **Zero-Knowledge / End-to-End Encryption (E2EE)**. 
