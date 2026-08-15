@@ -95,5 +95,3 @@ Open the `stealthpad-app` folder in Android Studio, point `RetrofitClient`'s bas
 - [ ] Soft-delete / trash for notes
 
 ---
-
-yeh push kar do
