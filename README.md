@@ -1,161 +1,99 @@
-
 # StealthPad
 
-A private, offline-first notes application powered by **Zero-Knowledge / End-to-End Encryption (E2EE)**. 
-
-StealthPad encrypts all your notes client-side before they ever touch the network or database. The server stores only encrypted blobs and metadata—meaning no one, not even the server host, can read your data without your master password.
+A private, offline-first notes app for Android with on-device AES-256 encryption. Notes are encrypted before they ever touch local storage, using a key generated and held inside the Android Keystore — the key never leaves the device.
 
 ---
 
-## Security Architecture (Zero-Knowledge)
-
-* **Client-Side Encryption:** All note content and titles are encrypted/decrypted locally on the device using standard cryptography (e.g., AES-256-GCM / XChaCha20).
-* **Key Derivation:** Encryption keys are derived client-side from the master password using a secure key derivation function (e.g., Argon2id / PBKDF2).
-* **Zero-Knowledge Backend:** The backend handles authentication, synchronization, and storage of ciphertext blobs without ever receiving raw keys or plain text.
-* **Offline-First:** Read, create, and edit notes completely offline. Changes are stored locally and synchronized automatically when an internet connection is established.
-
----
-
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 StealthPad/
-├── stealthpad-app/       # Frontend client (Local crypto, offline storage, UI editor)
-└── stealthpad-backend/   # Backend API (Encrypted blob sync, JWT auth, database)
-
+├── stealthpad-app/       # Android client (Java, MVVM, Room, Hilt, Retrofit)
+└── stealthpad-backend/   # Spring Boot API (auth only, for now)
 ```
 
 ---
 
-## Features
+## How it works
 
-* **Zero-Knowledge Security:** True End-to-End Encryption where keys never leave the client device.
-* **Offline-First Workflow:** Full access to create, edit, and search notes without an active internet connection.
-* **Seamless Encrypted Sync:** Conflict-safe synchronization of encrypted payloads across devices.
-* **JWT-Based Authentication:** Extended 30-day session tokens for uninterrupted workflow across restarts.
-* **Decoupled Architecture:** Clean separation between the client-side cryptographic engine and the sync server.
-
----
-
-##  Tech Stack
-
-* **Frontend (`stealthpad-app`):** Modern Web / Mobile framework (React, React Native, or Electron), Web Crypto API / Libsodium, Local Database (IndexedDB / SQLite / WatermelonDB).
-* **Backend (`stealthpad-backend`):** Node.js / Express (or FastAPI) REST API for encrypted blob persistence.
-* **Authentication:** JSON Web Tokens (JWT).
-* **Database:** PostgreSQL / MongoDB / SQLite.
+- **Local-first storage** — Notes live in an on-device Room database. The app is fully usable without a network connection.
+- **On-device encryption** — Each note is encrypted with `AES/GCM/NoPadding` before it's written to disk. The AES key is generated and stored in the **Android Keystore**, so raw key material never leaves secure hardware/OS storage and is never sent to the server.
+- **Account layer** — A Spring Boot backend handles registration and login (JWT-based) so a user's notes are scoped to their account (`user_email`) locally. Note *content* itself is not yet synced to the backend — the server currently only handles auth.
+- **Organization** — Notes can be tagged with a category (Personal, Work, Ideas, Secure, Important) and are timestamped.
 
 ---
 
-##  Getting Started
+## Tech Stack
+
+### Android app (`stealthpad-app`)
+- **Language:** Java
+- **Architecture:** MVVM (`ViewModel` + `LiveData`)
+- **DI:** Dagger Hilt
+- **Local storage:** Room
+- **Networking:** Retrofit2 + OkHttp (logging interceptor)
+- **Encryption:** `javax.crypto` (AES/GCM) backed by Android Keystore
+- **UI:** Material Components, ConstraintLayout, ViewBinding, Lottie animations
+- **Build:** Gradle (Kotlin DSL), `compileSdk`/`targetSdk` 36, `minSdk` 24
+
+### Backend (`stealthpad-backend`)
+- **Framework:** Spring Boot (`spring-boot-starter-webmvc`, `spring-boot-starter-security`, `spring-boot-starter-data-jpa`)
+- **Auth:** JWT (`io.jsonwebtoken` / jjwt)
+- **Database:** PostgreSQL
+- **Mapping:** ModelMapper
+- **Build:** Maven, Java 25
+
+---
+
+## Getting Started
 
 ### Prerequisites
+- Android Studio (recent stable) with SDK 36
+- JDK 17+ for the Android app; JDK 25 for the backend
+- PostgreSQL instance for the backend
+- Maven (or the bundled `mvnw`)
 
-* [Node.js](https://nodejs.org/) (v18+ recommended) or [Python](https://www.python.org/)
-* [Git](https://git-scm.com/)
-
----
-
-### 1. Clone the Repository
-
+### 1. Clone the repository
 ```bash
-git clone [https://github.com/Kavychaturvedi5427/StealthPad.git](https://github.com/Kavychaturvedi5427/StealthPad.git)
+git clone https://github.com/Kavychaturvedi5427/StealthPad.git
 cd StealthPad
-
 ```
 
----
-
-### 2. Backend Setup (`stealthpad-backend`)
-
-1. Navigate to the backend directory:
+### 2. Run the backend
 ```bash
 cd stealthpad-backend
-
 ```
-
-
-2. Install dependencies:
+Configure your database connection in `src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/stealthpad
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+Then run:
 ```bash
-npm install
-# OR: pip install -r requirements.txt
-
+./mvnw spring-boot:run
 ```
 
-
-3. Configure your environment variables (`.env`):
-```env
-PORT=5000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_jwt_secret_key
-
-```
-
-
-4. Start the server:
-```bash
-npm run dev
-# OR: npm start
-
-```
-
-
+### 3. Run the Android app
+Open the `stealthpad-app` folder in Android Studio, point `RetrofitClient`'s base URL at your running backend instance (e.g. `http://10.0.2.2:8080/` for the emulator), and run the app on a device or emulator.
 
 ---
 
-### 3. Frontend Setup (`stealthpad-app`)
+## API
 
-1. Open a new terminal and navigate to the frontend directory:
-```bash
-cd stealthpad-app
-
-```
-
-
-2. Install dependencies:
-```bash
-npm install
-
-```
-
-
-3. Configure API endpoints:
-```env
-VITE_API_URL=http://localhost:5000
-# OR: REACT_APP_API_URL=http://localhost:5000
-
-```
-
-
-4. Run the development server:
-```bash
-npm run dev
-# OR: npm start
-
-```
-
-
+| Method | Endpoint             | Description                |
+|--------|-----------------------|-----------------------------|
+| POST   | `/api/auth/register`  | Create a new account        |
+| POST   | `/api/auth/login`     | Authenticate and get a JWT  |
 
 ---
 
-##  Synchronization & Encryption Flow
+## Roadmap
 
-```
-+-------------------------------------------------------------+
-|                      Client (Device)                        |
-|  [Master Password] -> [Key Derivation (Argon2id/PBKDF2)]    |
-|                                │                            |
-|                                ▼                            |
-|  [Plaintext Note]  -> [Local Encrypt (AES-256/XChaCha20)]   |
-|                                │                            |
-|                                ▼                            |
-|  [Local DB (Offline Cache)] <- [Ciphertext Blob]            |
-+--------------------------------┬----------------------------+
-                                 │ Sync (Ciphertext Only)
-                                 ▼
-+-------------------------------------------------------------+
-|                    StealthPad Backend Server                |
-|  - Stores: { user_id, note_id, ciphertext, iv, salt, sync_tag } |
-|  - Cannot decrypt or read content                           |
-+-------------------------------------------------------------+
+- [ ] Sync encrypted note payloads to the backend (server storing ciphertext only)
+- [ ] Biometric app lock
+- [ ] In-app note search
+- [ ] Soft-delete / trash for notes
 
-```
+---
+
+yeh push kar do
