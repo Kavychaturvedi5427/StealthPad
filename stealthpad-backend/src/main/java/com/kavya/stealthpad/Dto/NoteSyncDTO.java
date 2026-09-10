@@ -1,9 +1,13 @@
 package com.kavya.stealthpad.Dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class NoteRequestDTO {
+@Builder
+public class NoteSyncDTO {
+
+    private Long id;
 
     private String title;
 
@@ -12,6 +16,13 @@ public class NoteRequestDTO {
     private String category;
 
     private long timestamp;
-    
+
+    private long updatedAt;
+
+    private long version;
+
+    private boolean deleted;
+
     private boolean isVault;
+
 }
