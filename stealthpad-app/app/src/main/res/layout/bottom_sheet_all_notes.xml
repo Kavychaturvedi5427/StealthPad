@@ -9,6 +9,7 @@
         android:id="@+id/bottom_sheet_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="28dp"
         app:cardElevation="0dp"
         app:strokeWidth="0dp">

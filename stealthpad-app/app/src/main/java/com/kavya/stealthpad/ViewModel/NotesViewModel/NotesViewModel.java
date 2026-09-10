@@ -27,13 +27,14 @@ public class NotesViewModel extends ViewModel {
         this.repo = repository;
     }
 
-    public void validateNote(String title, String content, String category, String email) {
+    public void validateNote(String title, String content, String category, String email, boolean isVault) {
         notesState.setValue(new NotesState.LoadingState());
         if (title == null || title.trim().isEmpty()) {
             notesState.setValue(new NotesState.ErrorState("Title can't be empty."));
             return;
         }
         NotesModel model = new NotesModel(title, content, System.currentTimeMillis(), category, email);
+        model.setVault(isVault);
         repo.saveNote(model, new NotesRepository.SavenotesCallback() {
             @Override
             public void onSuccess() {
@@ -51,8 +52,16 @@ public class NotesViewModel extends ViewModel {
         return repo.getAllNotes(email);
     }
 
+    public LiveData<List<NotesModel>> getNotesByCategory(String email, String category){
+        return repo.getNotesByCategory(email, category);
+    }
+
     public LiveData<List<NotesModel>> getRecentNotes(String email){
         return repo.getRecentNotes(email);
+    }
+
+    public LiveData<List<NotesModel>> getVaultNotes(String email){
+        return repo.getVaultNotes(email);
     }
 
     public LiveData<NotesModel> getNoteById(int id){

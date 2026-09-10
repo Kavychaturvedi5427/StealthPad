@@ -1,7 +1,6 @@
 package com.kavya.stealthpad.Dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Data

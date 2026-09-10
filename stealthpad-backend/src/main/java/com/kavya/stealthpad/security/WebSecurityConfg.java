@@ -24,8 +24,18 @@ public class WebSecurityConfg {
                             sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                             .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
                             .permitAll()
+<<<<<<< Updated upstream
                             .anyRequest().authenticated())
                             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);;
+=======
+<<<<<<< Updated upstream
+                            .anyRequest().authenticated());                            
+                            ;
+=======
+                            .anyRequest().authenticated())
+                            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // this filter is added to authenticate each request....
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         return http.build();
     }
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Premium Palette (Warm Noir Refined) -->
+    <color name="warm_white">#0C0B0A</color> <!-- Deepest background -->
+    <color name="soft_cream">#141211</color> <!-- Main surface -->
+    <color name="light_sand">#1C1917</color> <!-- Secondary surface -->
+    <color name="muted_beige">#352F2A</color> <!-- Borders and muted details -->
+    <color name="accent_brown">#D4A373</color> <!-- Soft gold/caramel accent -->
+
+    <!-- Dashboard Dark Palette -->
+    <color name="dash_bg">#0C0B0A</color>
+    <color name="dash_surface">#141211</color>
+    <color name="dash_surface_variant">#1C1917</color>
+    <color name="dash_accent">#D4A373</color>
+    <color name="dash_text_primary">#EBE5DE</color>
+    <color name="dash_text_secondary">#9E948C</color>
+    <color name="dash_search_bg">#181614</color>
+    <color name="dash_card_bg">#141211</color>
+    <color name="dash_divider">#26221F</color>
+
+    <!-- Semantic Mapping -->
+    <color name="splash_bg">#0C0B0A</color>
+    <color name="warm_accent">@color/dash_accent</color>
+    <color name="warm_text">#EBE5DE</color>
+    <color name="warm_text_secondary">#9E948C</color>
+
+    <!-- Premium Theme Palette - Dark -->
+    <color name="nav_active_bg">#26221F</color>
+    <color name="nav_active_icon">#D4A373</color>
+    <color name="nav_inactive_icon">#7A6F66</color>
+    <color name="fab_caramel">#D4A373</color>
+
+    <!-- Auth Dialog Schema -->
+    <color name="auth_dialog_bg">#141211</color>
+    <color name="auth_title">@color/dash_text_primary</color>
+    <color name="auth_subtitle">@color/dash_text_secondary</color>
+    <color name="auth_input_bg">#181614</color>
+    <color name="auth_primary_btn">@color/dash_accent</color>
+    <color name="auth_secondary_btn">@color/dash_text_secondary</color>
+
+    <!-- Splash Gradient - Dark -->
+    <color name="splash_gradient_start">#12100E</color>
+    <color name="splash_gradient_center">#0C0B0A</color>
+    <color name="splash_gradient_end">#060505</color>
+</resources>

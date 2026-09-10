@@ -44,4 +44,21 @@ public class SessionManager {
     public String getEmail() {
         return prefs.getString("email", null);
     }
+
+    // Vault methods
+    public boolean isVaultSetup() {
+        return prefs.getBoolean("vault_setup", false);
+    }
+
+    public void setVaultSetup(boolean setup) {
+        prefs.edit().putBoolean("vault_setup", setup).apply();
+    }
+
+    public String getVaultPin() {
+        return prefs.getString("vault_pin", null);
+    }
+
+    public void setVaultPin(String pin) {
+        prefs.edit().putString("vault_pin", pin).apply();
+    }
 }

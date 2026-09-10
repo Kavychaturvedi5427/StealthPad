@@ -20,12 +20,14 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -34,42 +36,56 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
 }
 
 dependencies {
+
+    // Android UI
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation("androidx.activity:activity:1.9.3")
+    implementation("androidx.fragment:fragment:1.8.5")
+
+    // WorkManager
+    implementation(libs.work.runtime)
+
+    // Dagger Hilt
+    implementation("com.google.dagger:hilt-android:2.60.1")
+    annotationProcessor("com.google.dagger:hilt-compiler:2.60.1")
+
+    // Hilt + WorkManager
+    implementation("androidx.hilt:hilt-work:1.4.0")
+    annotationProcessor("androidx.hilt:hilt-compiler:1.4.0")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    // Room DB....
-    val room_version = "2.6.1"
+    // Room
+    val roomVersion = "2.6.1"
 
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
 
-    // Livedata + ViewModel + Lifecycle....
-    val lifecycle_version = "2.7.0"
+    // Lifecycle
+    val lifecycleVersion = "2.8.7"
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-livedata:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-runtime:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-runtime:$lifecycleVersion")
 
     // UI
     val lottieVersion = "6.7.1"
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.airbnb.android:lottie:$lottieVersion")
-    implementation("com.google.android.material:material:1.14.0")
 
-    // DI (Hilt Dagger Dependency)
-    implementation("com.google.dagger:hilt-android:2.57")
-    annotationProcessor("com.google.dagger:hilt-compiler:2.57")
+    // Biometric
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
 
-    // Retrofit Dependency...
+    // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

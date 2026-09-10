@@ -20,6 +20,7 @@ import com.kavya.stealthpad.R;
 import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthState;
 import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthViewModel;
 import com.kavya.stealthpad.data.DataModel.AuthResponseDto;
+import com.kavya.stealthpad.synchronization.SyncScheduler;
 import com.kavya.stealthpad.utils.SessionManager;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -90,8 +91,12 @@ public class AuthDialogFragment extends DialogFragment {
                         // storing the jwt in the sharedprefs so that user is logged in even after closing the app..
                         AuthResponseDto authResponseDto = ((AuthState.Success) state).getAuthResponseDto();
                         handleSuccess(authResponseDto);
-                        // recreate the dashboard for the user
-                        requireActivity().recreate();
+
+                        // start sync of the notes on login... but we also need to sync if the user is already logged in....
+                        SyncScheduler.syncNow(requireContext(), authResponseDto.getEmail());
+                        SyncScheduler.schedulerPeriodicSync(requireContext(), authResponseDto.getEmail());
+
+                        // Reset state and dismiss
                         authViewModel.resetState();
                         dismiss(); // close dialog
 

@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.kavya.stealthpad.utils.SyncStatus;
+
 @Entity(tableName = "notes")
 public class NotesModel {
 
@@ -26,8 +28,33 @@ public class NotesModel {
     @ColumnInfo(name = "user_email")
     private String userEmail;
 
+    @ColumnInfo(name = "sync_status")
+    private int syncStatus;         // 0 for pending, 1 for synced, 2 for failed...
+
+    @ColumnInfo(name = "server_id")
+    private Long serverId;      // this will later help in the updation at the backend...
+
+    @ColumnInfo(name = "is_vault", defaultValue = "0")
+    private boolean isVault;
+
     // Default constructor for Room
     public NotesModel() {
+    }
+
+    public boolean isVault() {
+        return isVault;
+    }
+
+    public void setVault(boolean vault) {
+        isVault = vault;
+    }
+
+    public int getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(int syncStatus) {
+        this.syncStatus = syncStatus;
     }
 
     // Constructor
@@ -37,6 +64,17 @@ public class NotesModel {
         this.timestamp = timestamp;
         this.category = category;
         this.userEmail = userEmail;
+        this.syncStatus = SyncStatus.PENDING;
+    }
+
+    // 3-argument constructor for convenience (e.g. in NotesRepository)
+    @Ignore
+    public NotesModel(String title, String content, long timestamp) {
+        this.title = title;
+        this.content = content;
+        this.timestamp = timestamp;
+        this.category = "General";
+        this.syncStatus = SyncStatus.PENDING;
     }
 
     public String getUserEmail() {
@@ -47,14 +85,6 @@ public class NotesModel {
         this.userEmail = userEmail;
     }
 
-    // 3-argument constructor for convenience (e.g. in NotesRepository)
-    @Ignore
-    public NotesModel(String title, String content, long timestamp) {
-        this.title = title;
-        this.content = content;
-        this.timestamp = timestamp;
-        this.category = "General";
-    }
 
     public String getCategory() {
         return category;
@@ -94,5 +124,13 @@ public class NotesModel {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Long getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(Long serverId) {
+        this.serverId = serverId;
     }
 }

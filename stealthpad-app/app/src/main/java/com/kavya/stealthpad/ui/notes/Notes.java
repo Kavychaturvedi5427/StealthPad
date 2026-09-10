@@ -1,5 +1,6 @@
 package com.kavya.stealthpad.ui.notes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import com.kavya.stealthpad.ViewModel.NotesViewModel.NotesState;
 import com.kavya.stealthpad.ViewModel.NotesViewModel.NotesViewModel;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
 import com.kavya.stealthpad.databinding.ActivityCreateNoteBinding;
+import com.kavya.stealthpad.ui.dashboard.DashboardActivity;
 import com.kavya.stealthpad.utils.DateTimeUtils;
 import com.kavya.stealthpad.utils.SessionManager;
 
@@ -83,6 +85,7 @@ public class Notes extends AppCompatActivity {
             }
             SessionManager sessionManager = new SessionManager(this);
             String email = sessionManager.getEmail();
+            boolean isVault = getIntent().getBooleanExtra("IS_VAULT", false);
 
             if(isEditMode){
                 current.setTitle(title);
@@ -92,7 +95,7 @@ public class Notes extends AppCompatActivity {
                 viewModel.updateNote(current);
             }
             else{
-                viewModel.validateNote(title, content, category, email);
+                viewModel.validateNote(title, content, category, email, isVault);
             }
         });
 
@@ -108,6 +111,40 @@ public class Notes extends AppCompatActivity {
             finish();
         });
 
+        // Initialize Custom Bottom Navigation
+        binding.stealthNavBar.setSelected(-1); // No selection on Create Note screen
+        binding.stealthNavBar.setOnNavigationItemSelectedListener(itemId -> {
+            if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(this, DashboardActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            } else if (itemId == R.id.nav_add) {
+                // Already on Create Note screen, maybe just clear if not edit mode?
+                // For now, let's just do nothing or toast
+            } else if (itemId == R.id.nav_vault) {
+                Intent intent = new Intent(this, DashboardActivity.class);
+                intent.putExtra("NAVIGATE_TO", R.id.nav_vault);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            } else {
+                // For other items, we might need to go back to Dashboard and then show the fragment
+                // But since they are fragments in DashboardActivity, the simplest way is to go back to Dashboard
+                Intent intent = new Intent(this, DashboardActivity.class);
+                intent.putExtra("NAVIGATE_TO", itemId);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
+
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void observeState(){
@@ -115,28 +152,28 @@ public class Notes extends AppCompatActivity {
             if(state instanceof NotesState.LoadingState){
                 progressBar.setVisibility(View.VISIBLE);
             }
-            else if(state instanceof NotesState.SuccessState){                Snackbar.make(binding.getRoot(), "Note saved", Snackbar.LENGTH_SHORT).show();
+            else if(state instanceof NotesState.SuccessState){
                 Snackbar snackbar = Snackbar.make(binding.getRoot(), "Note saved", Snackbar.LENGTH_SHORT);
-                snackbar.setAnchorView(findViewById(R.id.navbar));
+                snackbar.setAnchorView(binding.stealthNavBar);
                 snackbar.show();
                 progressBar.setVisibility(View.GONE);
             }
             else if(state instanceof NotesState.ErrorState){
                 progressBar.setVisibility(View.GONE);
                 Snackbar snackbar = Snackbar.make(binding.getRoot(), "Note can't be added.", Snackbar.LENGTH_SHORT);
-                snackbar.setAnchorView(findViewById(R.id.navbar));
+                snackbar.setAnchorView(binding.stealthNavBar);
                 snackbar.show();
             }
             else if(state instanceof NotesState.DeleteSuccess){
                 progressBar.setVisibility(View.GONE);
                 Snackbar snackbar = Snackbar.make(binding.getRoot(), "Note deleted", Snackbar.LENGTH_SHORT);
-                snackbar.setAnchorView(findViewById(R.id.navbar));
+                snackbar.setAnchorView(binding.stealthNavBar);
                 snackbar.show();
                 finish();
             } else if (state instanceof NotesState.DeleteFailure) {
                 progressBar.setVisibility(View.GONE);
                 Snackbar snackbar = Snackbar.make(binding.getRoot(), "Note can't be deleted", Snackbar.LENGTH_SHORT);
-                snackbar.setAnchorView(findViewById(R.id.navbar));
+                snackbar.setAnchorView(binding.stealthNavBar);
                 snackbar.show();
             }
         });
