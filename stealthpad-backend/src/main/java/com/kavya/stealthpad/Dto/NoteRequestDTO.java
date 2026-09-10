@@ -1,8 +1,10 @@
 package com.kavya.stealthpad.Dto;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 public class NoteRequestDTO {
 
     private String title;
@@ -12,6 +14,4 @@ public class NoteRequestDTO {
     private String category;
 
     private long timestamp;
-    
-    private boolean isVault;
 }
