@@ -1,9 +1,7 @@
 package com.kavya.stealthpad.ui.Auth;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.se.omapi.Session;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +13,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.kavya.stealthpad.R;
 import com.kavya.stealthpad.ui.dashboard.DashboardActivity;
 import com.kavya.stealthpad.utils.SessionManager;
 
 
 public class ProfileDialog extends DialogFragment {
-
-    private LinearLayout logout;
 
     @Nullable
     @Override

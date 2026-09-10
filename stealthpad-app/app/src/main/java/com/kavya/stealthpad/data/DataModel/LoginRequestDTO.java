@@ -2,19 +2,19 @@ package com.kavya.stealthpad.data.DataModel;
 
 public class LoginRequestDTO {
     private String email;
-    private String pass;
+    private String password;
 
-    public LoginRequestDTO(String em, String ps){
-        this.email = em;
-        this.pass = ps;
+    public LoginRequestDTO(String email, String password){
+        this.email = email;
+        this.password = password;
     }
 
-    public String getPass() {
-        return pass;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {

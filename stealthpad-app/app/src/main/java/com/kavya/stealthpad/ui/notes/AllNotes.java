@@ -16,7 +16,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 import com.kavya.stealthpad.R;
 import com.kavya.stealthpad.ViewModel.NotesViewModel.NotesViewModel;
+import com.kavya.stealthpad.data.Local.model.NotesModel;
+import com.kavya.stealthpad.ui.dashboard.DashboardActivity;
 import com.kavya.stealthpad.utils.SessionManager;
+
+import android.content.Intent;
+import android.widget.Toast;
 
 public class AllNotes extends BottomSheetDialogFragment {
 
@@ -25,6 +30,12 @@ public class AllNotes extends BottomSheetDialogFragment {
     private SessionManager sessionManager;
     private TextView notecount;
     private MaterialButton close;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme);
+    }
 
     @Nullable
     @Override
@@ -50,6 +61,24 @@ public class AllNotes extends BottomSheetDialogFragment {
 
         // setting up the adapter...
         NotesAdapter notesAdapter = new NotesAdapter(R.layout.item_note_staggered);
+        notesAdapter.setNotesListener(new NotesAdapter.NotesListener() {
+            @Override
+            public void onNoteClick(NotesModel note) {
+                Intent intent = new Intent(requireContext(), Notes.class);
+                intent.putExtra("NOTE_ID", note.getId());
+                intent.putExtra("IS_VAULT", note.isVault());
+                startActivity(intent);
+                requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                dismiss();
+            }
+
+            @Override
+            public void onNoteLongClick(NotesModel note) {
+                if (getActivity() instanceof DashboardActivity) {
+                    ((DashboardActivity) getActivity()).showNoteOptions(note);
+                }
+            }
+        });
         allNotesRecycler.setAdapter(notesAdapter);
         // for brick layout...
         allNotesRecycler.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));

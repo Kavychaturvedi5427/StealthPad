@@ -1,7 +1,5 @@
 package com.kavya.stealthpad.ViewModel.AuthViewModel;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -77,10 +75,10 @@ public class AuthViewModel extends ViewModel {
 
     public void checkAuth(SessionManager sessionManager){
         if(sessionManager.isLoggedIn()){
-            authState.setValue(new AuthState.LoggedIn());
+            authState.postValue(new AuthState.LoggedIn());
         }
         else{
-            authState.setValue(new AuthState.LoggedOut());
+            authState.postValue(new AuthState.LoggedOut());
         }
     }
 

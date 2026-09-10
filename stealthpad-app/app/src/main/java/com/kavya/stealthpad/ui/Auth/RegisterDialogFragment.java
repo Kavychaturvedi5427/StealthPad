@@ -1,7 +1,6 @@
 package com.kavya.stealthpad.ui.Auth;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,8 +47,6 @@ public class RegisterDialogFragment extends DialogFragment {
 
         register_btn = view.findViewById(R.id.btn_register);
         register_btn.setOnClickListener(v->{
-            Log.d("REGISTER", "Button clicked");
-
             TextInputEditText fullname = view.findViewById(R.id.name_input);
             TextInputEditText email = view.findViewById(R.id.email_input);
             TextInputEditText password = view.findViewById(R.id.password_input);

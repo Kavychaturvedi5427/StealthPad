@@ -8,10 +8,11 @@
     android:fitsSystemWindows="true">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/home_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="100dp">
+        android:paddingBottom="120dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,24 +54,26 @@
 
                 <FrameLayout
                     android:id="@+id/authbtn"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true">
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/auth_img"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@mipmap/ic_launcher_foreground"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="6dp"
+                        android:background="@color/white"
+                        android:src="@drawable/logo"
                         app:shapeAppearanceOverlay="@style/CircleImage"
                         app:strokeColor="@color/dash_accent"
                         app:strokeWidth="1.5dp"/>
 
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/profileAnimation"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:visibility="gone"
                         app:lottie_rawRes="@raw/useravatar"
                         app:lottie_autoPlay="true"
@@ -89,7 +92,7 @@
                 android:background="@color/dash_divider"
                 android:alpha="0.8" />
 
-            <!-- Your Vaults Section (Displaying Top 3 Notes) -->
+            <!-- Recent Notes Section (Displaying Top 3 Notes) -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -97,11 +100,11 @@
                 android:layout_marginHorizontal="25dp">
 
                 <TextView
-                    android:id="@+id/vaultTitle"
+                    android:id="@+id/recentNotesTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Your Vaults"
+                    android:text="@string/recent_notes"
                     android:layout_centerVertical="true"
                     android:textColor="@color/dash_text_primary"
                     android:textSize="20sp"
@@ -133,21 +136,21 @@
                 android:background="@drawable/bg_window_boundary"
                 android:clipToOutline="true">
 
+                <!-- Subtle window gloss/detail -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewNotes"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
+                    android:fadingEdgeLength="40dp"
+                    android:overScrollMode="never"
                     android:paddingVertical="16dp"
                     android:requiresFadingEdge="vertical"
-                    android:fadingEdgeLength="40dp"
                     android:scrollbarStyle="insideOverlay"
                     android:scrollbars="vertical"
-                    android:overScrollMode="never"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/item_note_folder" />
 
-                <!-- Subtle window gloss/detail -->
                 <View
                     android:layout_width="40dp"
                     android:layout_height="3dp"
@@ -178,12 +181,196 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/lexend"
-                        android:text="Your vault is empty"
+                        android:text="@string/no_notes_found"
                         android:textColor="@color/dash_accent"
                         android:textSize="13sp"
                         android:visibility="gone" />
                 </LinearLayout>
             </FrameLayout>
+
+            <!-- Browse Categories Section -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="25dp">
+
+                <TextView
+                    android:id="@+id/categoriesTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Browse Categories"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/dash_text_primary"
+                    android:textSize="20sp"
+                    android:letterSpacing="-0.02" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnViewAllCategories"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="See All"
+                    android:textColor="@color/dash_accent"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium" />
+
+            </RelativeLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/categoriesScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="17dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Personal Category -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCategoryPersonal"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="28dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#0D000000">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@android:drawable/ic_menu_myplaces"
+                                app:tint="@color/dash_accent" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="Personal"
+                                android:textColor="@color/dash_text_primary"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tap to view"
+                                android:textColor="@color/dash_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Work Category -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCategoryWork"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="28dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#0D000000">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@android:drawable/ic_menu_agenda"
+                                app:tint="@color/dash_accent" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="Work"
+                                android:textColor="@color/dash_text_primary"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tap to view"
+                                android:textColor="@color/dash_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Ideas Category -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCategoryIdeas"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="false"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="28dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#0D000000">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@drawable/idea"
+                                app:tint="@color/dash_accent" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="Ideas"
+                                android:textColor="@color/dash_text_primary"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tap to view"
+                                android:textColor="@color/dash_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+            </HorizontalScrollView>
 
 
 
@@ -191,46 +378,21 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Floating Bottom Navigation -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/bottom_nav_container"
+    <!-- Fragment Container for other screens -->
+    <FrameLayout
+        android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <!-- New Reusable Stealth Navbar -->
+    <com.kavya.stealthpad.ui.components.StealthNavBar
+        android:id="@+id/stealth_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/nav_bar_height"
         android:layout_gravity="bottom"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="24dp"
-        app:cardBackgroundColor="@color/dash_card_bg"
-        app:cardCornerRadius="36dp"
-        app:cardElevation="12dp"
-        app:strokeColor="@color/dash_divider"
-        app:strokeWidth="1dp">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:itemIconSize="24dp"
-            app:itemIconTint="@color/dash_text_secondary"
-            app:itemRippleColor="@color/dash_surface"
-            app:labelVisibilityMode="unlabeled"
-            app:menu="@menu/bottom_nav_menu" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Standard Floating Action Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAddNewNote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="110dp"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/dash_accent"
-        app:tint="@color/white"
-        app:elevation="8dp"
-        app:maxImageSize="28dp" />
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp" />
 
     <ProgressBar
         android:id="@+id/progressBar"

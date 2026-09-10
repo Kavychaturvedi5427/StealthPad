@@ -23,9 +23,13 @@ public class StealthSplash extends AppCompatActivity {
             if (!isFinishing() && !isDestroyed()) {
                 Intent intent = new Intent(StealthSplash.this, DashboardActivity.class);
                 startActivity(intent);
+                
+                // Use fade transition for a smooth entry to Dashboard
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                
+                // Finish AFTER starting next activity to avoid black flicker
                 finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
-        }, 2500);
+        }, 2000);
     }
 }

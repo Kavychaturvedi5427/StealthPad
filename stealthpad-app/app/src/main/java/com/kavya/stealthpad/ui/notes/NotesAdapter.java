@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,11 +18,21 @@ import java.util.List;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder>{
 
+    public interface NotesListener {
+        void onNoteClick(NotesModel note);
+        void onNoteLongClick(NotesModel note);
+    }
+
     private List<NotesModel> notes = new ArrayList<>();
     private final int layoutId;
+    private NotesListener listener;
 
     public NotesAdapter(int id){
         this.layoutId = id;
+    }
+
+    public void setNotesListener(NotesListener listener) {
+        this.listener = listener;
     }
 
     public void setNotes(List<NotesModel> notes){
@@ -48,12 +57,26 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         holder.date.setText(DateTimeUtils.formatTimestamp(note.getTimestamp()));
         holder.category.setText(note.getCategory());
 
-        // updation feature...
-        holder.itemView.setOnClickListener(v->{
-            // moving to the notes activity to allow the user so that they can update the note...
-            Intent intent = new Intent(v.getContext(), Notes.class);
-            intent.putExtra("NOTE_ID", note.getId());
-            v.getContext().startActivity(intent);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onNoteClick(note);
+            } else {
+                // Fallback to existing behavior if no listener set
+                Intent intent = new Intent(v.getContext(), Notes.class);
+                intent.putExtra("NOTE_ID", note.getId());
+                intent.putExtra("IS_VAULT", note.isVault());
+                v.getContext().startActivity(intent);
+                if (v.getContext() instanceof android.app.Activity) {
+                    ((android.app.Activity) v.getContext()).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (listener != null) {
+                listener.onNoteLongClick(note);
+            }
+            return true;
         });
 
     }
