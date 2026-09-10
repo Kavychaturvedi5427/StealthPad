@@ -1,17 +1,13 @@
 package com.kavya.stealthpad.Dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class NoteRequestDTO {
-
-    private String title;
-
-    private String content;
-
-    private String category;
-
-    private long timestamp;
+@AllArgsConstructor
+public class UpdateNoteRequest {
     
-    private boolean isVault;
+    private String title;
+    private String content;
+    private String category;
 }
