@@ -4,6 +4,9 @@ import org.springframework.stereotype.Service;
 
 import com.kavya.stealthpad.Dto.NoteRequestDTO;
 import com.kavya.stealthpad.Dto.NoteResponseDTO;
+import com.kavya.stealthpad.Dto.NoteSyncRequestDTO;
+import com.kavya.stealthpad.Dto.NoteSyncResponseDTO;
+
 import java.util.*;
 
 /**
@@ -21,5 +24,7 @@ public interface NotesService {
     void deleteAllByUser();
 
     void delete(Long id);
+
+    NoteSyncResponseDTO syncNotes(NoteSyncRequestDTO request);
 
 }
