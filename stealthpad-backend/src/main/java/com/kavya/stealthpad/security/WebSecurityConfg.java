@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSecurityConfg {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final SecurityErrorHandler securityErrorHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,18 +25,11 @@ public class WebSecurityConfg {
                             sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                             .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
                             .permitAll()
-<<<<<<< Updated upstream
                             .anyRequest().authenticated())
+                            .exceptionHandling(exceptions -> exceptions
+                            .authenticationEntryPoint(securityErrorHandler)
+                            .accessDeniedHandler(securityErrorHandler))
                             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);;
-=======
-<<<<<<< Updated upstream
-                            .anyRequest().authenticated());                            
-                            ;
-=======
-                            .anyRequest().authenticated())
-                            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // this filter is added to authenticate each request....
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         return http.build();
     }
 

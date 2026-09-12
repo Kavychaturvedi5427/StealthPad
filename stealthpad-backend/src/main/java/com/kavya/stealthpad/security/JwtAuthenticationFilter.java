@@ -5,13 +5,12 @@ import java.io.IOException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-<<<<<<< Updated upstream
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-=======
->>>>>>> Stashed changes
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import io.jsonwebtoken.JwtException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -39,8 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         // get the request header...
         final String authHeader = request.getHeader("Authorization");
-        System.out.println("Auth Header --> " + authHeader);
-
         // if it's not a Bearer token move forward in the security chain...
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -50,18 +47,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // otherwise get the jwt and authenticate..
         String jwt = authHeader.substring(7);
 
-        String email = authUtils.extractUsername(jwt);
+        try {
+            String email = authUtils.extractUsername(jwt);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            if (authUtils.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authtoken = new UsernamePasswordAuthenticationToken(userDetails,
-                        null, userDetails.getAuthorities());
-                authtoken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                if (authUtils.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authtoken = new UsernamePasswordAuthenticationToken(userDetails,
+                            null, userDetails.getAuthorities());
+                    authtoken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authtoken);
+                    SecurityContextHolder.getContext().setAuthentication(authtoken);
+                }
             }
+        } catch (JwtException | IllegalArgumentException | UsernameNotFoundException exception) {
+            SecurityContextHolder.clearContext();
         }
+
         filterChain.doFilter(request, response);
     }
 
