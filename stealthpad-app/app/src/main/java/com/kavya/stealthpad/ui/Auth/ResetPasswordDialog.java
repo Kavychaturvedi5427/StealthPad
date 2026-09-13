@@ -30,7 +30,7 @@ public class ResetPasswordDialog extends DialogFragment {
     private CircularProgressIndicator progressindi;
     private MaterialButton btnReset;
     private TextInputEditText otpInput, passInput, confirmPassInput, emailInput;
-    private TextInputLayout otpLayout, passLayout, confirmPassLayout;
+    private TextInputLayout otpLayout, passLayout, confirmPassLayout, emailLayout;
 
     public static ResetPasswordDialog newInstance(String email) {
         ResetPasswordDialog fragment = new ResetPasswordDialog();
@@ -63,6 +63,7 @@ public class ResetPasswordDialog extends DialogFragment {
         otpLayout = view.findViewById(R.id.otp_lay);
         passLayout = view.findViewById(R.id.pass_lay);
         confirmPassLayout = view.findViewById(R.id.confirm_pass_lay);
+        emailLayout = view.findViewById(R.id.email_lay);
 
         if (email != null) {
             emailInput.setText(email);
@@ -73,6 +74,11 @@ public class ResetPasswordDialog extends DialogFragment {
 
         btnReset.setOnClickListener(v -> {
             String enteredEmail = emailInput.getText().toString().trim();
+            // Fallback to passed email if input is empty or disabled
+            if ((enteredEmail.isEmpty() || !emailInput.isEnabled()) && email != null) {
+                enteredEmail = email;
+            }
+            
             String otp = otpInput.getText().toString().trim();
             String newPass = passInput.getText().toString().trim();
             String confirmPass = confirmPassInput.getText().toString().trim();
@@ -80,8 +86,11 @@ public class ResetPasswordDialog extends DialogFragment {
             otpLayout.setError(null);
             passLayout.setError(null);
             confirmPassLayout.setError(null);
+            emailLayout.setError(null);
 
-            if (otp.isEmpty()) {
+            if (enteredEmail.isEmpty()) {
+                emailLayout.setError("Email is required");
+            } else if (otp.isEmpty()) {
                 otpLayout.setError("OTP is required");
             } else if (newPass.isEmpty()) {
                 passLayout.setError("New password is required");
