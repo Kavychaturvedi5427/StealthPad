@@ -1,5 +1,6 @@
 package com.kavya.stealthpad.ui.Auth;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthState;
 import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthViewModel;
 import com.kavya.stealthpad.data.DataModel.AuthResponseDto;
 import com.kavya.stealthpad.synchronization.SyncScheduler;
+import com.kavya.stealthpad.utils.BiometricHelper;
 import com.kavya.stealthpad.utils.SessionManager;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -31,11 +33,13 @@ public class AuthDialogFragment extends DialogFragment {
     private AuthViewModel authViewModel;
     private CircularProgressIndicator progressindi;
     private MaterialButton unlock;
+    private SessionManager sessionManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+        sessionManager = new SessionManager(requireContext());
         View view = inflater.inflate(R.layout.dialog_auth, container, false);
 
         unlock = view.findViewById(R.id.btn_unlock);
@@ -44,6 +48,8 @@ public class AuthDialogFragment extends DialogFragment {
         TextInputEditText pass_inp = view.findViewById(R.id.password_input);
         TextInputLayout email_lay = view.findViewById(R.id.email_lay);
         TextInputLayout pass_lay = view.findViewById(R.id.pass_lay);
+        View biometricBtn = view.findViewById(R.id.btn_biometric_auth);
+        View biometricContainer = view.findViewById(R.id.biometric_container);
 
         view.findViewById(R.id.btn_close_auth).setOnClickListener(v -> dismiss());
 
@@ -56,11 +62,28 @@ public class AuthDialogFragment extends DialogFragment {
 
             if (email.isEmpty()) {
                 email_lay.setError("Email is required");
+            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                email_lay.setError("Enter a valid email address");
             } else if (pass.isEmpty()) {
                 pass_lay.setError("Password required");
+            } else if (pass.length() < 6) {
+                pass_lay.setError("Password must be at least 6 characters");
             } else {
                 authViewModel.login(email, pass);
             }
+        });
+
+        boolean canBiometric = BiometricHelper.isBiometricAvailable(requireContext()) && sessionManager.isBiometricEnabled();
+        biometricContainer.setVisibility(canBiometric ? View.VISIBLE : View.GONE);
+
+        biometricBtn.setOnClickListener(v -> {
+            startBiometricAuth();
+        });
+
+        view.findViewById(R.id.btn_forgot_password).setOnClickListener(v -> {
+            dismiss();
+            ForgotPasswordDialog forgotDialog = new ForgotPasswordDialog();
+            forgotDialog.show(getParentFragmentManager(), "ForgotPasswordDialog");
         });
 
         MaterialButton registerBtn = view.findViewById(R.id.btn_create_account);
@@ -73,6 +96,26 @@ public class AuthDialogFragment extends DialogFragment {
         // observing and updating the ui based on the changes in the states.....
         observeAuthState();
         return view;
+    }
+
+    private void startBiometricAuth() {
+        BiometricHelper.showBiometricPrompt(
+                this,
+                "Biometric Login",
+                "Log in to your StealthPad account",
+                "Use Password",
+                new BiometricHelper.BiometricCallback() {
+                    @Override
+                    public void onAuthenticationSuccess() {
+                        if (sessionManager.isLoggedIn()) {
+                            dismiss();
+                            Toast.makeText(requireContext(), "Biometric Login Successful", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(), "Please login with password first to enable biometrics", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
     }
 
     private void observeAuthState() {
@@ -93,8 +136,9 @@ public class AuthDialogFragment extends DialogFragment {
                         handleSuccess(authResponseDto);
 
                         // start sync of the notes on login... but we also need to sync if the user is already logged in....
-                        SyncScheduler.syncNow(requireContext(), authResponseDto.getEmail());
-                        SyncScheduler.schedulerPeriodicSync(requireContext(), authResponseDto.getEmail());
+                        Context appContext = requireContext().getApplicationContext();
+                        SyncScheduler.syncNow(appContext, authResponseDto.getEmail());
+                        SyncScheduler.schedulerPeriodicSync(appContext, authResponseDto.getEmail());
 
                         // Reset state and dismiss
                         authViewModel.resetState();
@@ -103,10 +147,8 @@ public class AuthDialogFragment extends DialogFragment {
                     }
                     else if(state instanceof AuthState.Error){
                         hideLoading();
-                        String error =
-                                ((AuthState.Error) state)
-                                        .getError();
-                        Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show();
+                        String error = ((AuthState.Error) state).getError();
+                        Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show();
                         authViewModel.resetState();
                     }
                 }

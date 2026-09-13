@@ -5,9 +5,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.kavya.stealthpad.data.DataModel.AuthResponseDto;
+import com.kavya.stealthpad.data.DataModel.ForgotPassRequest;
 import com.kavya.stealthpad.data.DataModel.LoginRequestDTO;
 import com.kavya.stealthpad.data.DataModel.RegisterRequestDTO;
+import com.kavya.stealthpad.data.DataModel.ResetPasswordRequest;
+import com.kavya.stealthpad.data.DataModel.ApiError;
 import com.kavya.stealthpad.data.repository.Auth.AuthRepository;
+import com.kavya.stealthpad.utils.ApiErrorHandler;
 import com.kavya.stealthpad.utils.SessionManager;
 
 import javax.inject.Inject;
@@ -21,6 +25,7 @@ import retrofit2.Response;
 public class AuthViewModel extends ViewModel {
 
     private final AuthRepository authRepository;
+    private final ApiErrorHandler errorHandler;
 
     private final MutableLiveData<AuthState> authState = new MutableLiveData<>();
 
@@ -29,8 +34,9 @@ public class AuthViewModel extends ViewModel {
     }
 
     @Inject
-    public AuthViewModel(AuthRepository repo){
+    public AuthViewModel(AuthRepository repo, ApiErrorHandler errorHandler){
         this.authRepository = repo;
+        this.errorHandler = errorHandler;
     }
     public void login(String em, String ps){
         authState.setValue(new AuthState.Loading());
@@ -42,13 +48,20 @@ public class AuthViewModel extends ViewModel {
                     authState.setValue(new AuthState.Success(response.body()));
                 }
                 else{
-                    authState.setValue(new AuthState.Error("Login failed"));
+                    ApiError apiError = errorHandler.handleError(response);
+                    // Special handling for login: 401 should just show an error, not logout
+                    if (apiError.getStatusCode() == 401) {
+                        authState.setValue(new AuthState.Error("Invalid email or password"));
+                    } else {
+                        authState.setValue(new AuthState.Error(apiError.getMessage()));
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponseDto> call, Throwable throwable) {
-                authState.setValue(new AuthState.Error(throwable.getMessage()));
+                ApiError apiError = errorHandler.handleException(throwable);
+                authState.setValue(new AuthState.Error(apiError.getMessage()));
             }
         });
     }
@@ -61,14 +74,92 @@ public class AuthViewModel extends ViewModel {
                 if (response.isSuccessful() && response.body() != null) {
                     authState.setValue(new AuthState.Success(response.body()));
                 } else {
-
-                    authState.setValue(new AuthState.Error("Registration failed"));
+                    ApiError apiError = errorHandler.handleError(response);
+                    authState.setValue(new AuthState.Error(apiError.getMessage()));
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponseDto> call, Throwable throwable) {
-                authState.setValue(new AuthState.Error(throwable.getMessage()));
+                ApiError apiError = errorHandler.handleException(throwable);
+                authState.setValue(new AuthState.Error(apiError.getMessage()));
+            }
+        });
+    }
+
+    public void forgotPassword(String email) {
+        authState.setValue(new AuthState.Loading());
+        ForgotPassRequest request = new ForgotPassRequest(email);
+        authRepository.forgotPassword(request).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    authState.setValue(new AuthState.ForgotPassSuccess(response.body() != null ? response.body() : "OTP sent successfully"));
+                } else {
+                    ApiError apiError = errorHandler.handleError(response);
+                    if (apiError.getStatusCode() == 401) {
+                        authState.setValue(new AuthState.LoggedOut());
+                    } else {
+                        authState.setValue(new AuthState.Error(apiError.getMessage()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable throwable) {
+                ApiError apiError = errorHandler.handleException(throwable);
+                authState.setValue(new AuthState.Error(apiError.getMessage()));
+            }
+        });
+    }
+
+    public void resetPassword(String email, String otp, String newPassword) {
+        authState.setValue(new AuthState.Loading());
+        ResetPasswordRequest request = new ResetPasswordRequest(email, otp, newPassword);
+        authRepository.resetPassword(request).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    authState.setValue(new AuthState.ResetPassSuccess(response.body() != null ? response.body() : "Password reset successful"));
+                } else {
+                    ApiError apiError = errorHandler.handleError(response);
+                    if (apiError.getStatusCode() == 401) {
+                        authState.setValue(new AuthState.LoggedOut());
+                    } else {
+                        authState.setValue(new AuthState.Error(apiError.getMessage()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable throwable) {
+                ApiError apiError = errorHandler.handleException(throwable);
+                authState.setValue(new AuthState.Error(apiError.getMessage()));
+            }
+        });
+    }
+
+    public void deleteAccount() {
+        authState.setValue(new AuthState.Loading());
+        authRepository.deleteAccount().enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    authState.setValue(new AuthState.DeleteAccountSuccess(response.body() != null ? response.body() : "Account deleted successfully"));
+                } else {
+                    ApiError apiError = errorHandler.handleError(response);
+                    if (apiError.getStatusCode() == 401) {
+                        authState.setValue(new AuthState.LoggedOut());
+                    } else {
+                        authState.setValue(new AuthState.Error(apiError.getMessage()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable throwable) {
+                ApiError apiError = errorHandler.handleException(throwable);
+                authState.setValue(new AuthState.Error(apiError.getMessage()));
             }
         });
     }

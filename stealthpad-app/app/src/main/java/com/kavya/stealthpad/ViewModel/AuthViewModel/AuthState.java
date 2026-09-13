@@ -15,6 +15,21 @@ public abstract class AuthState {
 
         public AuthResponseDto getAuthResponseDto(){ return authResponseDto; }
     }
+    public static class ForgotPassSuccess extends AuthState {
+        private final String message;
+        public ForgotPassSuccess(String message) { this.message = message; }
+        public String getMessage() { return message; }
+    }
+    public static class ResetPassSuccess extends AuthState {
+        private final String message;
+        public ResetPassSuccess(String message) { this.message = message; }
+        public String getMessage() { return message; }
+    }
+    public static class DeleteAccountSuccess extends AuthState {
+        private final String message;
+        public DeleteAccountSuccess(String message) { this.message = message; }
+        public String getMessage() { return message; }
+    }
     public static class Error extends AuthState {
         private final String error;
         public Error(String error) { this.error = error; }
