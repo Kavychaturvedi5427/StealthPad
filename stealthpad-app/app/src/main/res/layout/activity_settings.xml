@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/profile_bg"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <!-- Custom Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:paddingHorizontal="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btn_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            app:cardBackgroundColor="@color/dash_card_bg"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/profile_border">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center"
+                android:src="@drawable/back"
+                app:tint="@color/profile_text_primary"
+                android:contentDescription="Go back" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/lexend"
+            android:text="Settings"
+            android:textColor="@color/profile_text_primary"
+            android:textSize="18sp"
+             />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="40dp">
+
+            <!-- Account Section -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="ACCOUNT" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/btn_manage_account"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/accsetting"
+                            android:contentDescription="Account Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="Manage Account" />
+                            <TextView
+                                style="@style/SettingsItemSubtitle"
+                                android:text="Profile, security and deletion" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_logout"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/logout"
+                            app:tint="@color/profile_danger"
+                            android:contentDescription="Logout Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:textColor="@color/profile_danger"
+                                android:text="Logout" />
+                            <TextView
+                                style="@style/SettingsItemSubtitle"
+                                android:text="Sign out of your account" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Appearance Section -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="APPEARANCE" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:id="@+id/btn_change_theme"
+                    style="@style/SettingsItemContainer">
+
+                    <ImageView
+                        style="@style/SettingsItemIcon"
+                        android:src="@drawable/themes" />
+
+                    <LinearLayout style="@style/SettingsItemTextContainer">
+                        <TextView
+                            style="@style/SettingsItemTitle"
+                            android:text="Change Theme" />
+                        <TextView
+                            android:id="@+id/current_theme_text"
+                            style="@style/SettingsItemSubtitle"
+                            android:text="Choose how StealthPad looks" />
+                    </LinearLayout>
+                    <ImageView style="@style/SettingsItemChevron" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Security & Privacy Section -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="SECURITY &amp; PRIVACY" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/fingerprint"
+                            android:contentDescription="Biometric Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="Biometric Lock" />
+                            <TextView
+                                style="@style/SettingsItemSubtitle"
+                                android:text="Use fingerprint/face to unlock" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switch_biometric"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_auto_lock"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_lock"
+                            android:contentDescription="Lock Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="Auto Lock" />
+                            <TextView
+                                android:id="@+id/current_auto_lock_text"
+                                style="@style/SettingsItemSubtitle"
+                                android:text="After 5 minutes" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Notes Section -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="NOTES" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/btn_sort_notes"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/reset"
+                            android:contentDescription="Sort Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="Sort Notes" />
+                            <TextView
+                                android:id="@+id/current_sort_text"
+                                style="@style/SettingsItemSubtitle"
+                                android:text="Recently Updated" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_default_category"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/category"
+                            android:contentDescription="Category Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="Default Category" />
+                            <TextView
+                                android:id="@+id/current_category_text"
+                                style="@style/SettingsItemSubtitle"
+                                android:text="Personal" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Storage Section -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="STORAGE" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:id="@+id/btn_clear_storage"
+                    style="@style/SettingsItemContainer">
+                    <ImageView
+                        style="@style/SettingsItemIcon"
+                        android:src="@drawable/broom"
+                        app:tint="@color/profile_danger"
+                        android:contentDescription="Delete Icon" />
+                    <LinearLayout style="@style/SettingsItemTextContainer">
+                        <TextView
+                            style="@style/SettingsItemTitle"
+                            android:textColor="@color/profile_danger"
+                            android:text="Clear Local Storage" />
+                        <TextView
+                            style="@style/SettingsItemSubtitle"
+                            android:text="Remove local notes and attachments" />
+                    </LinearLayout>
+                    <ImageView
+                        style="@style/SettingsItemChevron"
+                        android:contentDescription="Arrow" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- About Section -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="ABOUT" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/btn_about"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/info"
+                            android:contentDescription="Info Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="About StealthPad" />
+                            <TextView
+                                style="@style/SettingsItemSubtitle"
+                                android:text="Version and application information" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_privacy_policy"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_lock"
+                            android:contentDescription="Privacy Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="Privacy Policy" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_terms"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/terms"
+                            android:contentDescription="Terms Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="Terms &amp; Conditions" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:text="StealthPad v1.0.0"
+                android:textColor="@color/profile_text_secondary"
+                android:textSize="11sp"
+                android:alpha="0.6" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
