@@ -54,9 +54,9 @@
             </LinearLayout>
         </FrameLayout>
 
-        <!-- Slot 2: Categories -->
+        <!-- Slot 2: Stealth AI -->
         <FrameLayout
-            android:id="@+id/nav_categories"
+            android:id="@+id/nav_ai"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -65,7 +65,7 @@
             android:background="?attr/selectableItemBackgroundBorderless">
 
             <LinearLayout
-                android:id="@+id/container_categories"
+                android:id="@+id/container_ai"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -77,20 +77,20 @@
                 android:duplicateParentState="true">
 
                 <ImageView
-                    android:id="@+id/icon_categories"
+                    android:id="@+id/icon_ai"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:src="@drawable/category"
+                    android:src="@drawable/stealthai"
                     android:duplicateParentState="true"
                     app:tint="@color/nav_item_text_color" />
 
                 <TextView
-                    android:id="@+id/label_categories"
+                    android:id="@+id/label_ai"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Categories"
+                    android:text="Stealth AI"
                     android:duplicateParentState="true"
                     android:textColor="@color/nav_item_text_color"
                     android:textSize="10sp" />

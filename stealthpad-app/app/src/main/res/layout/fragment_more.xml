@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/dash_card_bg"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_divider">
 
@@ -37,33 +37,25 @@
                 android:padding="8dp">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_more_manage_account"
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Account Information"
+                    android:text="Manage Account"
                     android:gravity="start|center_vertical"
                     android:textColor="@color/dash_text_primary"
-                    app:icon="@android:drawable/ic_menu_myplaces"
+                    app:icon="@drawable/accsetting"
                     app:iconTint="@color/dash_accent"/>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_more_settings"
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Sync Status"
+                    android:text="Settings"
                     android:gravity="start|center_vertical"
                     android:textColor="@color/dash_text_primary"
-                    app:icon="@android:drawable/ic_popup_sync"
-                    app:iconTint="@color/dash_accent"/>
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Security &amp; Privacy"
-                    android:gravity="start|center_vertical"
-                    android:textColor="@color/dash_text_primary"
-                    app:icon="@drawable/ic_lock"
+                    app:icon="@android:drawable/ic_menu_manage"
                     app:iconTint="@color/dash_accent"/>
 
             </LinearLayout>
@@ -76,7 +68,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="8dp"
-            android:text="Preferences"
+            android:text="Session"
             android:textColor="@color/dash_text_secondary"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
@@ -87,7 +79,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/dash_card_bg"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_divider">
 
@@ -98,23 +90,14 @@
                 android:padding="8dp">
 
                 <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="App Theme"
-                    android:gravity="start|center_vertical"
-                    android:textColor="@color/dash_text_primary"
-                    app:icon="@android:drawable/ic_menu_manage"
-                    app:iconTint="@color/dash_accent"/>
-
-                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_logout"
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Logout"
                     android:gravity="start|center_vertical"
                     android:textColor="#E53935"
-                    app:icon="@android:drawable/ic_lock_power_off"
+                    app:icon="@drawable/logout"
                     app:iconTint="#E53935"/>
 
             </LinearLayout>
