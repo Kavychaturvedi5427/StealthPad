@@ -14,7 +14,7 @@ import com.kavya.stealthpad.R;
 
 public class StealthNavBar extends MaterialCardView {
 
-    private View navHome, navCategories, navVault, navMore;
+    private View navHome, navAi, navVault, navMore;
     private View navAdd;
     private OnNavigationItemSelectedListener listener;
 
@@ -45,16 +45,16 @@ public class StealthNavBar extends MaterialCardView {
         setCardBackgroundColor(context.getColor(R.color.dash_card_bg));
 
         navHome = findViewById(R.id.nav_home);
-        navCategories = findViewById(R.id.nav_categories);
+        navAi = findViewById(R.id.nav_ai);
         navVault = findViewById(R.id.nav_vault);
         navMore = findViewById(R.id.nav_more);
         navAdd = findViewById(R.id.nav_add);
 
         navHome.setOnClickListener(v -> handleSelection(R.id.nav_home));
-        navCategories.setOnClickListener(v -> handleSelection(R.id.nav_categories));
+        navAi.setOnClickListener(v -> handleSelection(R.id.nav_ai));
         navVault.setOnClickListener(v -> handleSelection(R.id.nav_vault));
         navMore.setOnClickListener(v -> handleSelection(R.id.nav_more));
-        
+
         if (navAdd != null) {
             navAdd.setOnClickListener(v -> {
                 if (listener != null) listener.onItemSelected(R.id.nav_add);
@@ -78,7 +78,7 @@ public class StealthNavBar extends MaterialCardView {
 
     public void setSelected(int itemId) {
         if (navHome != null) navHome.setSelected(itemId == R.id.nav_home);
-        if (navCategories != null) navCategories.setSelected(itemId == R.id.nav_categories);
+        if (navAi != null) navAi.setSelected(itemId == R.id.nav_ai);
         if (navVault != null) navVault.setSelected(itemId == R.id.nav_vault);
         if (navMore != null) navMore.setSelected(itemId == R.id.nav_more);
     }

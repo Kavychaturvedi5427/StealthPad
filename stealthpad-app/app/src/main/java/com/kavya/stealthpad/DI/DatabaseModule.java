@@ -7,6 +7,7 @@ import androidx.room.Room;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.kavya.stealthpad.data.Local.Dao.NoteAttachmentDao;
 import com.kavya.stealthpad.data.Local.Dao.NotesDao;
 import com.kavya.stealthpad.data.Local.db.RoomDBSetup;
 
@@ -40,7 +41,7 @@ public class DatabaseModule {
                         RoomDBSetup.class,
                         RoomDBSetup.DB_NAME
                 )
-                .addMigrations(MIGRATION_3_4)
+                .addMigrations(MIGRATION_3_4, RoomDBSetup.MIGRATION_4_5)
                 .fallbackToDestructiveMigration()
                 .build();
     }
@@ -50,5 +51,12 @@ public class DatabaseModule {
             RoomDBSetup database
     ) {
         return database.notesDao();
+    }
+
+    @Provides
+    public NoteAttachmentDao provideNoteAttachmentDao(
+            RoomDBSetup database
+    ) {
+        return database.noteAttachmentDao();
     }
 }
