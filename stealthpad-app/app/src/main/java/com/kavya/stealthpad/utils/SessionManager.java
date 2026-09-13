@@ -118,4 +118,34 @@ public class SessionManager {
     public void setLoggingOut(boolean loggingOut) {
         prefs.edit().putBoolean("is_logging_out", loggingOut).apply();
     }
+
+    public long getLastVaultUnlockTime() {
+        return prefs.getLong("last_vault_unlock_time", 0);
+    }
+
+    public void setLastVaultUnlockTime(long time) {
+        prefs.edit().putLong("last_vault_unlock_time", time).apply();
+    }
+
+    public void saveCredentials(String email, String encryptedPass) {
+        prefs.edit()
+                .putString("saved_email", email)
+                .putString("saved_pass", encryptedPass)
+                .apply();
+    }
+
+    public String getSavedEmail() {
+        return prefs.getString("saved_email", null);
+    }
+
+    public String getSavedPassword() {
+        return prefs.getString("saved_pass", null);
+    }
+
+    public void clearSavedCredentials() {
+        prefs.edit()
+                .remove("saved_email")
+                .remove("saved_pass")
+                .apply();
+    }
 }

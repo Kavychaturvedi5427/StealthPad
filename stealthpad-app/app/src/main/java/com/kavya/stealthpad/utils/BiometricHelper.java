@@ -20,7 +20,8 @@ public class BiometricHelper {
 
     public static boolean isBiometricAvailable(Context context) {
         BiometricManager biometricManager = BiometricManager.from(context.getApplicationContext());
-        return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS;
+        int result = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.BIOMETRIC_WEAK);
+        return result == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
     public static void showBiometricPrompt(
@@ -86,7 +87,7 @@ public class BiometricHelper {
                 .setTitle(title)
                 .setSubtitle(subtitle)
                 .setNegativeButtonText(negativeButtonText)
-                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.BIOMETRIC_WEAK)
                 .build();
     }
 }
