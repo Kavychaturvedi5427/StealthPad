@@ -17,83 +17,123 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            >
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="10dp">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnBack"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentStart="true"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                android:layout_margin="10dp"
-                app:cardElevation="8dp"
+                android:layout_centerVertical="true"
+                app:cardBackgroundColor="@color/dash_card_bg"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:strokeColor="#0D000000"
+                app:strokeColor="@color/dash_divider"
                 app:strokeWidth="1dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="10dp"
-                    android:elevation="10dp"
                     android:src="@drawable/back"
                     app:tint="@color/dash_text_primary" />
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnDeleteNote"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_toStartOf="@id/btnSaveNote"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
                 android:visibility="gone"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/dash_card_bg"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="2dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:strokeColor="#0D000000"
+                app:strokeColor="@color/dash_divider"
                 app:strokeWidth="1dp"
-                tools:visibility="invisible">
+                tools:visibility="visible">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="12dp"
-                    android:src="@android:drawable/ic_menu_delete"
-                    app:tint="#E53935" />
+                    android:padding="10dp"
+                    android:src="@drawable/delete"
+                    app:tint="@color/profile_danger" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveNote"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/lexend"
+                android:text="Save Note"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:paddingHorizontal="20dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:backgroundTint="@color/stealth_taupe"
+                app:cornerRadius="15dp"
+                app:elevation="2dp"
+                app:icon="@drawable/ic_check"
+                app:iconSize="18dp"
+                app:iconPadding="8dp"
+                app:iconTint="@color/white"
+                app:rippleColor="#20FFFFFF" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnAiNote"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_toStartOf="@id/btnAddImage"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                app:cardBackgroundColor="@color/dash_card_bg"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:strokeColor="@color/dash_divider"
+                app:strokeWidth="1dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_ai"
+                    app:tint="@color/dash_accent" />
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/btnSaveNote"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_alignParentEnd="true"
+                android:id="@+id/btnAddImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_toStartOf="@id/btnDeleteNote"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                app:cardBackgroundColor="@color/dash_card_bg"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_centerInParent="true"
-                app:cardBackgroundColor="@color/dash_accent"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                app:strokeColor="@color/dash_divider"
+                app:strokeWidth="1dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Save"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                    android:padding="10dp"
+                    android:src="@drawable/ic_add"
+                    app:tint="@color/dash_accent" />
             </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
@@ -143,7 +183,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cat_personal"
-                    app:chipBackgroundColor="@color/white"
+                    app:chipBackgroundColor="@color/dash_card_bg"
                     app:chipStrokeColor="@color/dash_divider"
                     app:chipStrokeWidth="1dp" />
 
@@ -153,7 +193,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cat_work"
-                    app:chipBackgroundColor="@color/white"
+                    app:chipBackgroundColor="@color/dash_card_bg"
                     app:chipStrokeColor="@color/dash_divider"
                     app:chipStrokeWidth="1dp" />
 
@@ -163,7 +203,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cat_ideas"
-                    app:chipBackgroundColor="@color/white"
+                    app:chipBackgroundColor="@color/dash_card_bg"
                     app:chipStrokeColor="@color/dash_divider"
                     app:chipStrokeWidth="1dp" />
 
@@ -173,7 +213,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cat_secure"
-                    app:chipBackgroundColor="@color/white"
+                    app:chipBackgroundColor="@color/dash_card_bg"
                     app:chipStrokeColor="@color/dash_divider"
                     app:chipStrokeWidth="1dp" />
 
@@ -183,12 +223,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cat_important"
-                    app:chipBackgroundColor="@color/white"
+                    app:chipBackgroundColor="@color/dash_card_bg"
                     app:chipStrokeColor="@color/dash_divider"
                     app:chipStrokeWidth="1dp" />
 
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
+
+        <!-- Attachments List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_attachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_attachment"
+            tools:visibility="visible" />
 
         <!-- Content Input -->
         <EditText
