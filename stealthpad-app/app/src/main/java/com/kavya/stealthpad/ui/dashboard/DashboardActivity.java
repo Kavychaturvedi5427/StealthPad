@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,11 +31,9 @@ import com.kavya.stealthpad.synchronization.SyncScheduler;
 import com.kavya.stealthpad.ui.Auth.AuthDialogFragment;
 import com.kavya.stealthpad.ui.Auth.ProfileDialog;
 import com.kavya.stealthpad.ui.notes.AllNotes;
-import com.kavya.stealthpad.ui.notes.CategoriesFragment;
-import com.kavya.stealthpad.ui.notes.CategoryNotesBottomSheet;
 import com.kavya.stealthpad.ui.notes.Notes;
 import com.kavya.stealthpad.ui.notes.NotesAdapter;
-import com.kavya.stealthpad.ui.vault.VaultAuthBottomSheet;
+import com.kavya.stealthpad.ui.vault.VaultAccessBottomSheet;
 import com.kavya.stealthpad.ui.vault.VaultFragment;
 import com.kavya.stealthpad.ui.vault.VaultSetupFragment;
 import com.kavya.stealthpad.utils.SessionManager;
@@ -67,6 +66,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         
         binding = DashboardBinding.inflate(getLayoutInflater());
@@ -86,8 +86,8 @@ public class DashboardActivity extends AppCompatActivity {
             if (sessionManager.isLoggedIn()) {
                 String email = sessionManager.getEmail();
                 if (email != null && !email.isEmpty()) {
-                    SyncScheduler.syncNow(this, email);
-                    SyncScheduler.schedulerPeriodicSync(this, email);
+                    SyncScheduler.syncNow(getApplicationContext(), email);
+                    SyncScheduler.schedulerPeriodicSync(getApplicationContext(), email);
                 }
             }
         }, 500);
@@ -153,26 +153,10 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        // Setup Category Card Click Listeners
-        binding.cardCategoryPersonal.setOnClickListener(v -> openCategoryNotes("Personal"));
-        binding.cardCategoryWork.setOnClickListener(v -> openCategoryNotes("Work"));
-        binding.cardCategoryIdeas.setOnClickListener(v -> openCategoryNotes("Ideas"));
-        binding.btnViewAllCategories.setOnClickListener(v -> {
-            if (sessionManager.isLoggedIn()) {
-                navigateTo(R.id.nav_categories);
-            } else {
-                Toast.makeText(this, "Please login to view categories", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         // Initialize Custom Bottom Navigation
         binding.stealthNavBar.setOnNavigationItemSelectedListener(this::navigateTo);
 
         // Handle navigation from other activities
-        if (getIntent().hasExtra("NAVIGATE_TO")) {
-            int itemId = getIntent().getIntExtra("NAVIGATE_TO", R.id.nav_home);
-            navigateTo(itemId);
-        }
 
         observeState();
         
@@ -275,25 +259,30 @@ public class DashboardActivity extends AppCompatActivity {
             binding.mainFragmentContainer.setVisibility(View.GONE);
             binding.stealthNavBar.setSelected(R.id.nav_home);
 
-        } else if (itemId == R.id.nav_categories) {
-            currentNavId = R.id.nav_categories;
-            isVaultAuthenticated = false;
-            showFragment(new CategoriesFragment(), "CATEGORIES");
-            binding.stealthNavBar.setSelected(R.id.nav_categories);
+        } else if (itemId == R.id.nav_ai) {
+            if (!sessionManager.isLoggedIn()) {
+                Toast.makeText(this, "Please login to use AI features", Toast.LENGTH_SHORT).show();
+                binding.stealthNavBar.setSelected(currentNavId);
+            } else {
+                // Now showing AI as a Bottom Sheet
+                StealthAIFragment.newInstance(null).show(getSupportFragmentManager(), "STEALTH_AI");
+                // Revert selection or keep it? If it's a bottom sheet, maybe we don't want to change the "tab"
+                binding.stealthNavBar.setSelected(currentNavId);
+            }
 
         } else if (itemId == R.id.nav_vault) {
             handleVaultNavigation();
 
         } else if (itemId == R.id.nav_more) {
-            currentNavId = R.id.nav_more;
-            isVaultAuthenticated = false;
-            showFragment(new MoreFragment(), "MORE");
-            binding.stealthNavBar.setSelected(R.id.nav_more);
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            // Revert navbar to previous valid section since we just opened an activity
+            binding.stealthNavBar.setSelected(currentNavId);
 
         } else if (itemId == R.id.nav_add) {
             if (!sessionManager.isLoggedIn()) {
                 Toast.makeText(this, "Please login to create note", Toast.LENGTH_SHORT).show();
-                // Reset navbar to current section
                 binding.stealthNavBar.setSelected(currentNavId);
             } else {
                 Intent intent = new Intent(this, Notes.class);
@@ -323,24 +312,40 @@ public class DashboardActivity extends AppCompatActivity {
             showFragment(new VaultFragment(), "VAULT");
             binding.stealthNavBar.setSelected(R.id.nav_vault);
         } else {
-            VaultAuthBottomSheet authDialog = new VaultAuthBottomSheet();
-            authDialog.setVaultAuthListener(new VaultAuthBottomSheet.VaultAuthListener() {
-                @Override
-                public void onVaultAuthenticated() {
-                    isVaultAuthenticated = true;
+            showVaultAccessDialog(null);
+        }
+    }
+
+    private void showVaultAccessDialog(@Nullable NotesModel pendingNote) {
+        VaultAccessBottomSheet authDialog = new VaultAccessBottomSheet();
+        authDialog.setVaultAuthListener(new VaultAccessBottomSheet.VaultAuthListener() {
+            @Override
+            public void onVaultAuthenticated() {
+                isVaultAuthenticated = true;
+                if (pendingNote != null) {
+                    moveNoteToVault(pendingNote);
+                } else {
                     currentNavId = R.id.nav_vault;
                     showFragment(new VaultFragment(), "VAULT");
                     binding.stealthNavBar.setSelected(R.id.nav_vault);
                 }
+            }
 
-                @Override
-                public void onVaultAuthCancelled() {
-                    // Revert navbar to previous valid section
+            @Override
+            public void onVaultAuthCancelled() {
+                if (pendingNote == null) {
                     binding.stealthNavBar.setSelected(currentNavId);
                 }
-            });
-            authDialog.show(getSupportFragmentManager(), "VAULT_AUTH");
-        }
+            }
+
+            @Override
+            public void onVaultReset() {
+                // If vault reset (Forgot PIN), refresh current view or navigate home
+                isVaultAuthenticated = false;
+                navigateTo(R.id.nav_home);
+            }
+        });
+        authDialog.show(getSupportFragmentManager(), "VAULT_ACCESS");
     }
 
     private void showFragment(Fragment fragment, String tag) {
@@ -349,15 +354,6 @@ public class DashboardActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, fragment, tag)
                 .commit();
-    }
-
-    private void openCategoryNotes(String category) {
-        if (!sessionManager.isLoggedIn()) {
-            Toast.makeText(this, "Please login to view notes", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        CategoryNotesBottomSheet bottomSheet = CategoryNotesBottomSheet.newInstance(category);
-        bottomSheet.show(getSupportFragmentManager(), "CATEGORY_NOTES");
     }
 
     private void showLoginDialog() {
@@ -425,6 +421,7 @@ public class DashboardActivity extends AppCompatActivity {
                     .setPositiveButton("Remove from Vault", (dialog, which) -> {
                         note.setVault(false);
                         notesViewModel.updateNote(note);
+                        triggerSync();
                         Toast.makeText(this, "Moved to normal notes", Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton("Cancel", null)
@@ -438,15 +435,7 @@ public class DashboardActivity extends AppCompatActivity {
                         if (isVaultAuthenticated) {
                             moveNoteToVault(note);
                         } else {
-                            VaultAuthBottomSheet authDialog = new VaultAuthBottomSheet();
-                            authDialog.setVaultAuthListener(new VaultAuthBottomSheet.VaultAuthListener() {
-                                @Override
-                                public void onVaultAuthenticated() {
-                                    isVaultAuthenticated = true;
-                                    moveNoteToVault(note);
-                                }
-                            });
-                            authDialog.show(getSupportFragmentManager(), "VAULT_AUTH");
+                            showVaultAccessDialog(note);
                         }
                     })
                     .setNegativeButton("Cancel", null)
@@ -457,7 +446,17 @@ public class DashboardActivity extends AppCompatActivity {
     private void moveNoteToVault(NotesModel note) {
         note.setVault(true);
         notesViewModel.updateNote(note);
+        triggerSync();
         Toast.makeText(this, "Moved to Private Vault", Toast.LENGTH_SHORT).show();
+    }
+
+    private void triggerSync() {
+        if (sessionManager.isLoggedIn()) {
+            String email = sessionManager.getEmail();
+            if (email != null && !email.isEmpty()) {
+                SyncScheduler.syncNow(getApplicationContext(), email);
+            }
+        }
     }
 
     private void confirmDelete(NotesModel note) {
@@ -466,6 +465,7 @@ public class DashboardActivity extends AppCompatActivity {
                 .setMessage("Are you sure you want to delete this note?")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     notesViewModel.deleteById(note.getId());
+                    triggerSync();
                     Toast.makeText(this, "Note deleted", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", null)
