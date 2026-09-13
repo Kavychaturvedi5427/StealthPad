@@ -20,24 +20,28 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "app_users")
-public class User implements UserDetails{
-    
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    
+
     @Column(name = "name")
     private String name;
-    
+
     @Column(name = "mail", unique = true)
     private String email;
 
     @Column(name = "pass")
     private String password;
 
-    @OneToMany(mappedBy = "user", 
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @Column(name = "reset_otp")
+    private String resetOtp;
+
+    @Column(name = "reset_otp_expiry")
+    private Date resetOtpExpiry;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> note = new ArrayList<>();
 
     @Override
@@ -49,6 +53,5 @@ public class User implements UserDetails{
     public String getUsername() {
         return email;
     }
-
 
 }
