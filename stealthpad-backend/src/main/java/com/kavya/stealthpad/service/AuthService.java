@@ -14,8 +14,12 @@ import com.kavya.stealthpad.Dto.LoginRequestDto;
 import com.kavya.stealthpad.Dto.RegisterDto;
 import com.kavya.stealthpad.Dto.ResetPasswordDto;
 import com.kavya.stealthpad.Entity.User;
+import com.kavya.stealthpad.repository.NotesRepository;
 import com.kavya.stealthpad.repository.UserRepository;
 import com.kavya.stealthpad.security.AuthUtils;
+
+import jakarta.transaction.Transactional;
+
 import com.kavya.stealthpad.exception.BadRequestException;
 import com.kavya.stealthpad.exception.ConflictException;
 import com.kavya.stealthpad.exception.ResourceNotFoundException;
@@ -31,6 +35,7 @@ public class AuthService {
     private final AuthUtils authUtils;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final NotesRepository notesRepository;
 
     public AuthResponseDto registerUser(RegisterDto registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
@@ -117,16 +122,22 @@ public class AuthService {
 
         return "Password reset successful";
     }
-
+    
+    @Transactional
     public String deleteAccount(String email) {
-        User user = userRepository.findByEmail(email);
 
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found");
-        }
+    User user = userRepository.findByEmail(email);
 
-        userRepository.delete(user);
-
-        return "Account deleted successfully";
+    if (user == null) {
+        throw new ResourceNotFoundException("User not found");
     }
+
+    // Delete only this user's notes
+    notesRepository.deleteByUser(user);
+
+    // Then delete the user
+    userRepository.delete(user);
+
+    return "Account deleted successfully";
+}
 }

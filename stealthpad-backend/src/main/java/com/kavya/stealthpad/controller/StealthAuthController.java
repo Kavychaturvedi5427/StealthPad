@@ -52,14 +52,4 @@ public class StealthAuthController {
                 authService.resetPassword(dto));
     }
 
-    @DeleteMapping("/account")
-    public ResponseEntity<String> deleteAccount(Authentication authentication) {
-
-        String email = authentication.getName();
-
-        return ResponseEntity.ok(
-                authService.deleteAccount(email)
-        );
-    }
-
 }
