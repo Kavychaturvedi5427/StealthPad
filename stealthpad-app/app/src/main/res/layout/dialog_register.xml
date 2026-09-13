@@ -7,7 +7,7 @@
     android:layout_marginVertical="24dp"
     app:cardCornerRadius="32dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="@color/dash_card_bg"
     app:strokeWidth="1dp"
     app:strokeColor="@color/dash_divider">
 
@@ -102,7 +102,7 @@
                 android:text="@string/reg_name_label"
                 android:textColor="@color/auth_title"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                 />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/name_lay"
@@ -136,7 +136,7 @@
                 android:text="@string/reg_email_label"
                 android:textColor="@color/auth_title"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                 />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_lay"
@@ -170,7 +170,7 @@
                 android:text="@string/reg_pass_label"
                 android:textColor="@color/auth_title"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                 />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/pass_lay"
@@ -206,7 +206,7 @@
                 android:text="@string/reg_confirm_pass_label"
                 android:textColor="@color/auth_title"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                 />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/confirm_pass_lay"
@@ -259,7 +259,7 @@
                 android:text="@string/reg_footer"
                 android:textColor="@color/auth_primary_btn"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                 />
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/loading_indicator"
