@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.kavya.stealthpad">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
@@ -16,23 +17,31 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StealthPad">
 
-        <activity android:name=".ui.splash.StealthSplash"
-            android:theme="@style/Theme.StealthPad.Splash"
-            android:exported="true">
+        <activity android:name=".ui.dashboard.DashboardActivity"
+            android:exported="true"
+            android:theme="@style/Theme.StealthPad.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.dashboard.DashboardActivity"
-            android:exported="false"
-            android:theme="@style/Theme.StealthPad" />
-
         <activity android:name=".ui.notes.Notes"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
+
+        <activity android:name=".ui.notes.ImageViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.StealthPad" />
+
+        <activity android:name=".ui.Auth.ManageAccountActivity"
+            android:exported="false"
+            android:theme="@style/Theme.StealthPad" />
+
+        <activity android:name=".ui.dashboard.SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.StealthPad" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

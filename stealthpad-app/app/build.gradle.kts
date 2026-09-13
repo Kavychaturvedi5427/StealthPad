@@ -41,6 +41,7 @@ android {
 dependencies {
 
     // Android UI
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation("androidx.activity:activity:1.9.3")
@@ -81,6 +82,10 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.airbnb.android:lottie:$lottieVersion")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
     // Biometric
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
