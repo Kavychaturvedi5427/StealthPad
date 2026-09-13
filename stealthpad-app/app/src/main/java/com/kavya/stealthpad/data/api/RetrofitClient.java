@@ -28,7 +28,7 @@ public class RetrofitClient {
     @Provides       // when someone asks for this type call this...
     @Singleton      // create one instance and reuse it ...
     public Retrofit provideRetrofit(OkHttpClient okHttpClient, Gson gson){
-        return new Retrofit.Builder().baseUrl("http://10.0.2.2:8080/")
+        return new Retrofit.Builder().baseUrl("https://stealthpad-backend.onrender.com/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okHttpClient)
                 .build();
@@ -56,9 +56,9 @@ public class RetrofitClient {
     @Singleton
     public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
         return new OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(authInterceptor)
                 .build();
     }
