@@ -3,8 +3,12 @@ package com.kavya.stealthpad.data.repository.Notes;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
+import com.kavya.stealthpad.data.Local.Dao.NoteAttachmentDao;
 import com.kavya.stealthpad.data.Local.Dao.NotesDao;
+import com.kavya.stealthpad.data.Local.model.NoteAttachment;
+import com.kavya.stealthpad.data.Local.model.NoteWithAttachments;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
+import com.kavya.stealthpad.utils.AttachmentStorageManager;
 import com.kavya.stealthpad.utils.EncryptionManager;
 import com.kavya.stealthpad.utils.SyncStatus;
 
@@ -18,6 +22,10 @@ import javax.inject.Inject;
 public class NotesRepository {
 
     private final EncryptionManager encryptionManager;
+    private final NoteAttachmentDao attachmentDao;
+    private final AttachmentStorageManager storageManager;
+    private final com.kavya.stealthpad.synchronization.SyncManager syncManager;
+    private final com.kavya.stealthpad.utils.SessionManager sessionManager;
 
 
     public interface SavenotesCallback {
@@ -30,18 +38,34 @@ public class NotesRepository {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     @Inject
-    public NotesRepository(NotesDao notesDao, EncryptionManager encryptionManager) {
+    public NotesRepository(NotesDao notesDao, NoteAttachmentDao attachmentDao, AttachmentStorageManager storageManager, EncryptionManager encryptionManager, com.kavya.stealthpad.synchronization.SyncManager syncManager, com.kavya.stealthpad.utils.SessionManager sessionManager) {
         this.dao = notesDao;
+        this.attachmentDao = attachmentDao;
+        this.storageManager = storageManager;
         this.encryptionManager = encryptionManager;
+        this.syncManager = syncManager;
+        this.sessionManager = sessionManager;
     }
 
     // storing the notes in the room db...
-    public void saveNote(NotesModel model, SavenotesCallback callback) {
+    public void saveNote(NotesModel model, List<NoteAttachment> attachments, SavenotesCallback callback) {
+        if (sessionManager.isLoggingOut()) {
+            callback.onError(new Exception("Logout in progress."));
+            return;
+        }
         executor.execute(() -> {
             try {
                 model.setSyncStatus(SyncStatus.PENDING_CREATE);
                 NotesModel encrypted = encrypt(model);
-                dao.insert(encrypted);
+                long noteId = dao.insert(encrypted);
+                
+                if (attachments != null) {
+                    for (NoteAttachment attachment : attachments) {
+                        attachment.setNoteId((int) noteId);
+                        attachmentDao.insert(attachment);
+                    }
+                }
+                
                 callback.onSuccess();
             } catch (Exception e) {
                 callback.onError(e);
@@ -49,48 +73,72 @@ public class NotesRepository {
         });
     }
 
+    public LiveData<List<NoteAttachment>> getAttachmentsForNote(int noteId) {
+        return attachmentDao.getAttachmentsForNote(noteId);
+    }
+
+    public void addAttachment(NoteAttachment attachment) {
+        executor.execute(() -> attachmentDao.insert(attachment));
+    }
+
+    public void deleteAttachment(NoteAttachment attachment) {
+        executor.execute(() -> {
+            attachmentDao.delete(attachment);
+            storageManager.deleteAttachment(attachment.getLocalPath());
+        });
+    }
+
     // ------------------------------------------- methods for fetching the notes -------------------------------------------
-    public LiveData<List<NotesModel>> getAllNotes(String email) {
-        // here instead of using livedata, we'll use MediatorLiveData so that we can decrypt the note before exposing the LiveData, as it's a read only class used for registering the updates....
-        MediatorLiveData<List<NotesModel>> res = new MediatorLiveData<>();
+    public LiveData<List<NoteWithAttachments>> getAllNotes(String email, String sortOrder) {
+        MediatorLiveData<List<NoteWithAttachments>> res = new MediatorLiveData<>();
+        
+        LiveData<List<NoteWithAttachments>> source;
+        switch (sortOrder) {
+            case "NEWEST_CREATED": source = dao.getAllNotesNewest(email); break;
+            case "OLDEST_CREATED": source = dao.getAllNotesOldest(email); break;
+            case "ALPHABETICAL": source = dao.getAllNotesAlphabetical(email); break;
+            default: source = dao.getAllNotesWithAttachments(email); break;
+        }
 
-        // this LiveData will hold the encrypted data...
-        LiveData<List<NotesModel>> source = dao.getAllNotes(email);
-
-        // now decrypting the notes...
         res.addSource(source, notes -> {
-            // null value check...
             if (notes == null) {
                 res.postValue(new ArrayList<>());
                 return;
             }
             executor.execute(() -> {
-                res.postValue(decryptNotes(notes));
+                res.postValue(decryptNotesWithAttachments(notes));
             });
         });
 
         return res;
     }
 
-    public LiveData<List<NotesModel>> getNotesByCategory(String email, String category) {
-        MediatorLiveData<List<NotesModel>> res = new MediatorLiveData<>();
-        LiveData<List<NotesModel>> source = dao.getNotesByCategory(email, category);
+    public LiveData<List<NoteWithAttachments>> getNotesByCategory(String email, String category, String sortOrder) {
+        MediatorLiveData<List<NoteWithAttachments>> res = new MediatorLiveData<>();
+        
+        LiveData<List<NoteWithAttachments>> source;
+        switch (sortOrder) {
+            case "NEWEST_CREATED": source = dao.getNotesByCategoryNewest(email, category); break;
+            case "OLDEST_CREATED": source = dao.getNotesByCategoryOldest(email, category); break;
+            case "ALPHABETICAL": source = dao.getNotesByCategoryAlphabetical(email, category); break;
+            default: source = dao.getNotesByCategoryWithAttachments(email, category); break;
+        }
+
         res.addSource(source, notes -> {
             if (notes == null) {
                 res.postValue(new ArrayList<>());
                 return;
             }
             executor.execute(() -> {
-                res.postValue(decryptNotes(notes));
+                res.postValue(decryptNotesWithAttachments(notes));
             });
         });
         return res;
     }
 
-    public LiveData<List<NotesModel>> getRecentNotes(String email) {
-        MediatorLiveData<List<NotesModel>> res = new MediatorLiveData<>();
-
-        LiveData<List<NotesModel>> source = dao.getRecentNotes(email);
+    public LiveData<List<NoteWithAttachments>> getRecentNotes(String email) {
+        MediatorLiveData<List<NoteWithAttachments>> res = new MediatorLiveData<>();
+        LiveData<List<NoteWithAttachments>> source = dao.getRecentNotesWithAttachments(email);
 
         res.addSource(source, notes -> {
             if (notes == null) {
@@ -98,22 +146,22 @@ public class NotesRepository {
                 return;
             }
             executor.execute(() -> {
-                res.postValue(decryptNotes(notes));
+                res.postValue(decryptNotesWithAttachments(notes));
             });
         });
         return res;
     }
 
-    public LiveData<List<NotesModel>> getVaultNotes(String email) {
-        MediatorLiveData<List<NotesModel>> res = new MediatorLiveData<>();
-        LiveData<List<NotesModel>> source = dao.getVaultNotes(email);
+    public LiveData<List<NoteWithAttachments>> getVaultNotes(String email) {
+        MediatorLiveData<List<NoteWithAttachments>> res = new MediatorLiveData<>();
+        LiveData<List<NoteWithAttachments>> source = dao.getVaultNotesWithAttachments(email);
         res.addSource(source, notes -> {
             if (notes == null) {
                 res.postValue(new ArrayList<>());
                 return;
             }
             executor.execute(() -> {
-                res.postValue(decryptNotes(notes));
+                res.postValue(decryptNotesWithAttachments(notes));
             });
         });
         return res;
@@ -140,6 +188,10 @@ public class NotesRepository {
 
     // ------------------------------------------- method for updating the notes -------------------------------------------
     public void updateNote(NotesModel current, SavenotesCallback savenotesCallback) {
+        if (sessionManager.isLoggingOut()) {
+            savenotesCallback.onError(new Exception("Logout in progress."));
+            return;
+        }
         executor.execute(() -> {
             try {
                 /*
@@ -172,7 +224,24 @@ public class NotesRepository {
         });
     }
 
+    public void deleteAllNotesSync(String email) {
+        dao.deleteAllNotes(email);
+    }
+
+    public boolean hasPendingSyncSync(String email) {
+        List<NotesModel> pending = dao.getNotesPendingSync(email);
+        return pending != null && !pending.isEmpty();
+    }
+
+    public boolean pushPendingChangesSync(String email) {
+        return syncManager.pushLocalChanges(email);
+    }
+
     public void deleteById(int id, SavenotesCallback savenotesCallback) {
+        if (sessionManager.isLoggingOut()) {
+            savenotesCallback.onError(new Exception("Logout in progress."));
+            return;
+        }
         executor.execute(() -> {
             try {
                 NotesModel note = dao.getNoteByIdSync(id);
@@ -188,7 +257,12 @@ public class NotesRepository {
                  * We can safely remove it locally.
                  */
                 if (note.getServerId() == null) {
+                    List<NoteAttachment> attachments = attachmentDao.getAttachmentsForNoteSync(id);
                     dao.deleteNoteByid(note.getId());
+                    // Cleanup files
+                    for (NoteAttachment attachment : attachments) {
+                        storageManager.deleteAttachment(attachment.getLocalPath());
+                    }
                 } else {
                     /*
                      * The server already knows about this note.
@@ -204,6 +278,24 @@ public class NotesRepository {
                 savenotesCallback.onError(e);
             }
         });
+    }
+
+    public LiveData<List<NoteWithAttachments>> searchNotes(String email, String query) {
+        MediatorLiveData<List<NoteWithAttachments>> res = new MediatorLiveData<>();
+        // Room LIKE query needs wildcards
+        String searchQuery = "%" + query + "%";
+        
+        LiveData<List<NoteWithAttachments>> source = dao.searchNotes(email, searchQuery);
+        res.addSource(source, notes -> {
+            if (notes == null) {
+                res.postValue(new ArrayList<>());
+                return;
+            }
+            executor.execute(() -> {
+                res.postValue(decryptNotesWithAttachments(notes));
+            });
+        });
+        return res;
     }
 
     private NotesModel encrypt(NotesModel current) throws Exception {
@@ -252,6 +344,21 @@ public class NotesRepository {
         model.setServerId(current.getServerId());
 
         return model;
+    }
+
+    private List<NoteWithAttachments> decryptNotesWithAttachments(List<NoteWithAttachments> notes) {
+        List<NoteWithAttachments> decrypted = new ArrayList<>();
+        for (NoteWithAttachments item : notes) {
+            try {
+                NoteWithAttachments decryptedItem = new NoteWithAttachments();
+                decryptedItem.note = decrypt(item.note);
+                decryptedItem.attachments = item.attachments;
+                decrypted.add(decryptedItem);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return decrypted;
     }
 
     private List<NotesModel> decryptNotes(List<NotesModel> notes) {

@@ -96,7 +96,8 @@ public class CategoryNotesBottomSheet extends BottomSheetDialogFragment {
         recyclerView.setAdapter(adapter);
 
         String email = sessionManager.getEmail();
-        notesViewModel.getNotesByCategory(email, categoryName).observe(getViewLifecycleOwner(), notes -> {
+        String sortOrder = sessionManager.getSortOrder();
+        notesViewModel.getNotesByCategory(email, categoryName, sortOrder).observe(getViewLifecycleOwner(), notes -> {
             if (notes == null || notes.isEmpty()) {
                 recyclerView.setVisibility(View.GONE);
                 emptyState.setVisibility(View.VISIBLE);

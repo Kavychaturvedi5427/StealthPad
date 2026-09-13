@@ -6,33 +6,61 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.kavya.stealthpad.data.Local.model.NoteWithAttachments;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
 
 import java.util.List;
 
 @Dao
 public interface NotesDao {
-    @Query("select * from notes where user_email = :email and is_vault = 0 order by timestamp DESC")
-    LiveData<List<NotesModel>> getAllNotes(String email);   // notes table will be observed automatically..
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and is_vault = 0 and sync_status != 5 order by timestamp DESC")
+    LiveData<List<NoteWithAttachments>> getAllNotesWithAttachments(String email);
 
-    @Query("select * from notes where user_email = :email and category = :category and is_vault = 0 order by timestamp DESC")
-    LiveData<List<NotesModel>> getNotesByCategory(String email, String category);
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and is_vault = 0 and sync_status != 5 order by id DESC")
+    LiveData<List<NoteWithAttachments>> getAllNotesNewest(String email);
 
-    // fetch recent 5 notes...
-    @Query("select * from notes where user_email = :email and is_vault = 0 order by timestamp DESC LIMIT 3")
-    LiveData<List<NotesModel>> getRecentNotes(String email);
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and is_vault = 0 and sync_status != 5 order by id ASC")
+    LiveData<List<NoteWithAttachments>> getAllNotesOldest(String email);
 
-    @Query("select * from notes where user_email = :email and is_vault = 1 order by timestamp DESC")
-    LiveData<List<NotesModel>> getVaultNotes(String email);
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and is_vault = 0 and sync_status != 5 order by title COLLATE NOCASE ASC")
+    LiveData<List<NoteWithAttachments>> getAllNotesAlphabetical(String email);
 
-    @Query("select * from notes where user_email = :email order by timestamp")
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and is_vault = 0 and sync_status != 5 order by timestamp DESC LIMIT 3")
+    LiveData<List<NoteWithAttachments>> getRecentNotesWithAttachments(String email);
+
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and category = :category and is_vault = 0 and sync_status != 5 order by timestamp DESC")
+    LiveData<List<NoteWithAttachments>> getNotesByCategoryWithAttachments(String email, String category);
+
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and category = :category and is_vault = 0 and sync_status != 5 order by id DESC")
+    LiveData<List<NoteWithAttachments>> getNotesByCategoryNewest(String email, String category);
+
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and category = :category and is_vault = 0 and sync_status != 5 order by id ASC")
+    LiveData<List<NoteWithAttachments>> getNotesByCategoryOldest(String email, String category);
+
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and category = :category and is_vault = 0 and sync_status != 5 order by title COLLATE NOCASE ASC")
+    LiveData<List<NoteWithAttachments>> getNotesByCategoryAlphabetical(String email, String category);
+
+    @androidx.room.Transaction
+    @Query("select * from notes where user_email = :email and is_vault = 1 and sync_status != 5 order by timestamp DESC")
+    LiveData<List<NoteWithAttachments>> getVaultNotesWithAttachments(String email);
+
+    @Query("select * from notes where user_email = :email and sync_status != 5 order by timestamp")
     LiveData<List<NotesModel>> getNotesByEmail(String email);
 
     @Query("select * from notes where id = :id")
     LiveData<NotesModel> getNoteById(int id);
 
     @Insert
-    void insert(NotesModel notesModel);
+    long insert(NotesModel notesModel);
 
     @Update
     void update(NotesModel notesModel);
@@ -43,6 +71,10 @@ public interface NotesDao {
     // delete based on id...
     @Query("delete from notes where id = :id")
     void deleteNoteByid(int id);
+
+    @androidx.room.Transaction
+    @Query("SELECT * FROM notes WHERE user_email = :email AND is_vault = 0 AND sync_status != 5 AND (title LIKE :query OR content LIKE :query) ORDER BY timestamp DESC")
+    LiveData<List<NoteWithAttachments>> searchNotes(String email, String query);
 
 
     /*
@@ -59,12 +91,12 @@ public interface NotesDao {
     List<NotesModel> getPendingNotes(int status);
 
     // fetch all notes that need synchronization...
-    @Query("select * from notes where sync_status in (0, 2, 3, 4, 5)")
-    List<NotesModel> getNotesPendingSync();
+    @Query("select * from notes where user_email = :email and sync_status in (0, 2, 3, 4, 5)")
+    List<NotesModel> getNotesPendingSync(String email);
 
     // Find a local note using the backend/server ID
-    @Query("SELECT * FROM notes WHERE server_id = :serverId LIMIT 1")
-    NotesModel getNoteByServerId(Long serverId);
+    @Query("SELECT * FROM notes WHERE server_id = :serverId AND user_email = :email LIMIT 1")
+    NotesModel getNoteByServerId(Long serverId, String email);
 
 
     // Update sync status
@@ -82,5 +114,8 @@ public interface NotesDao {
 
     @Query("DELETE FROM notes WHERE id = :id")
     void deleteNoteAfterSync(int id);
+
+    @Query("SELECT * FROM notes WHERE user_email = :email AND server_id IS NOT NULL")
+    List<NotesModel> getAllNotesWithServerIdSync(String email);
 
 }

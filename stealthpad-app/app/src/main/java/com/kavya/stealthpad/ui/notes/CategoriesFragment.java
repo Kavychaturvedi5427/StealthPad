@@ -40,7 +40,7 @@ public class CategoriesFragment extends Fragment {
         categories.add(new CategoryAdapter.CategoryItem("Personal", R.drawable.home));
         categories.add(new CategoryAdapter.CategoryItem("Work", android.R.drawable.ic_menu_agenda));
         categories.add(new CategoryAdapter.CategoryItem("Ideas", R.drawable.idea));
-        categories.add(new CategoryAdapter.CategoryItem("Important", R.drawable.ic_star));
+        categories.add(new CategoryAdapter.CategoryItem("Important", R.drawable.imp));
 
         CategoryAdapter adapter = new CategoryAdapter(categories, category -> {
             if (sessionManager.isLoggedIn()) {

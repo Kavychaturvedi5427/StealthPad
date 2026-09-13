@@ -4,14 +4,19 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.kavya.stealthpad.R;
+import com.kavya.stealthpad.data.Local.model.NoteWithAttachments;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
 import com.kavya.stealthpad.utils.DateTimeUtils;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +28,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         void onNoteLongClick(NotesModel note);
     }
 
-    private List<NotesModel> notes = new ArrayList<>();
+    private List<NoteWithAttachments> notes = new ArrayList<>();
     private final int layoutId;
     private NotesListener listener;
 
@@ -35,7 +40,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         this.listener = listener;
     }
 
-    public void setNotes(List<NotesModel> notes){
+    public void setNotes(List<NoteWithAttachments> notes){
         this.notes = notes != null ? notes : new ArrayList<>();
         notifyDataSetChanged();
     }
@@ -51,11 +56,28 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
 
-        NotesModel note = notes.get(position);
+        NoteWithAttachments noteWithAttachments = notes.get(position);
+        NotesModel note = noteWithAttachments.note;
+        
         holder.title.setText(note.getTitle());
         holder.preview.setText(note.getContent());
         holder.date.setText(DateTimeUtils.formatTimestamp(note.getTimestamp()));
         holder.category.setText(note.getCategory());
+
+        if (noteWithAttachments.attachments != null && !noteWithAttachments.attachments.isEmpty()) {
+            String path = noteWithAttachments.attachments.get(0).getLocalPath();
+            if (path != null && new File(path).exists()) {
+                holder.imagePreview.setVisibility(View.VISIBLE);
+                Glide.with(holder.itemView.getContext())
+                        .load(new File(path))
+                        .centerCrop()
+                        .into(holder.imagePreview);
+            } else {
+                holder.imagePreview.setVisibility(View.GONE);
+            }
+        } else {
+            holder.imagePreview.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -92,12 +114,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         TextView preview;
         TextView date;
         TextView category;
+        ImageView imagePreview;
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.note_title);
             this.preview = itemView.findViewById(R.id.note_content);
             this.date = itemView.findViewById(R.id.note_date);
             this.category = itemView.findViewById(R.id.category_chip);
+            this.imagePreview = itemView.findViewById(R.id.note_image_preview);
         }
     }
 

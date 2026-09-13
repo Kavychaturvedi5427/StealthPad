@@ -30,6 +30,8 @@ public class AllNotes extends BottomSheetDialogFragment {
     private SessionManager sessionManager;
     private TextView notecount;
     private MaterialButton close;
+    private androidx.appcompat.widget.SearchView searchView;
+    private String email;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,12 +54,13 @@ public class AllNotes extends BottomSheetDialogFragment {
         notesViewModel = new ViewModelProvider(requireActivity()).get(NotesViewModel.class);
         // getting logged in user...
         sessionManager = new SessionManager(requireContext());
-        String email = sessionManager.getEmail();
+        email = sessionManager.getEmail();
 
         //binding view groups...
         allNotesRecycler = view.findViewById(R.id.recycler_all_notes);
         notecount = view.findViewById(R.id.text_note_count);
         close = view.findViewById(R.id.btn_close);
+        searchView = view.findViewById(R.id.search_view);
 
         // setting up the adapter...
         NotesAdapter notesAdapter = new NotesAdapter(R.layout.item_note_staggered);
@@ -83,14 +86,21 @@ public class AllNotes extends BottomSheetDialogFragment {
         // for brick layout...
         allNotesRecycler.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        // fetching all the notes...
-        notesViewModel.getAllNotes(email).observe(getViewLifecycleOwner(), notes->{
-            notesAdapter.setNotes(notes);
-            // updating the notes count;
-            if (notes != null) {
-                notecount.setText(notes.size() + " notes");
-            } else {
-                notecount.setText("0 notes");
+        // Initial load
+        observeNotes(notesAdapter, null);
+
+        // Search Implementation
+        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                observeNotes(notesAdapter, query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                observeNotes(notesAdapter, newText);
+                return true;
             }
         });
 
@@ -98,5 +108,28 @@ public class AllNotes extends BottomSheetDialogFragment {
             dismiss();
         });
 
+    }
+
+    private void observeNotes(NotesAdapter adapter, String query) {
+        // Remove previous observers to avoid multiple subscriptions
+        notesViewModel.getAllNotes(email, sessionManager.getSortOrder()).removeObservers(getViewLifecycleOwner());
+        if (query != null && !query.trim().isEmpty()) {
+            notesViewModel.searchNotes(email, query).observe(getViewLifecycleOwner(), notes -> {
+                updateUI(adapter, notes);
+            });
+        } else {
+            notesViewModel.getAllNotes(email, sessionManager.getSortOrder()).observe(getViewLifecycleOwner(), notes -> {
+                updateUI(adapter, notes);
+            });
+        }
+    }
+
+    private void updateUI(NotesAdapter adapter, java.util.List<com.kavya.stealthpad.data.Local.model.NoteWithAttachments> notes) {
+        adapter.setNotes(notes);
+        if (notes != null) {
+            notecount.setText(notes.size() + " notes");
+        } else {
+            notecount.setText("0 notes");
+        }
     }
 }
