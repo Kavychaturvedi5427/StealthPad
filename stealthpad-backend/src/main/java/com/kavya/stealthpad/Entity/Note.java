@@ -25,12 +25,7 @@ public class Note {
     private String category;
 
     private long timestamp;
-
-<<<<<<< Updated upstream
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")       // this connects the notes table with users table based on the user id...
-    private User user;
-=======
+    
     private long updatedAt;
 
     @Column(nullable = false)
@@ -65,5 +60,4 @@ public class Note {
 
     }
 
->>>>>>> Stashed changes
 }
