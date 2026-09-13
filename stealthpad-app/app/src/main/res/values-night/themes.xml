@@ -2,28 +2,38 @@
     <!-- Base application theme. -->
     <style name="Theme.StealthPad" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/dash_accent</item>
-        <item name="colorOnPrimary">@color/dash_bg</item>
+        <item name="colorPrimary">@color/warm_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/dash_text_secondary</item>
-        <item name="colorOnSecondary">@color/dash_text_primary</item>
+        <item name="colorSecondary">@color/warm_text_secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
         <!-- Window background -->
         <item name="android:windowBackground">@color/dash_bg</item>
-        <!-- Status bar and Navigation bar -->
-        <item name="android:statusBarColor">@color/dash_bg</item>
-        <item name="android:navigationBarColor">@color/dash_bg</item>
+        <item name="android:windowDisablePreview">false</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/splash_bg</item>
         <item name="android:windowLightStatusBar">false</item>
+
+        <item name="android:navigationBarColor">@color/dash_bg</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
-        <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.StealthPad.Splash" parent="Theme.StealthPad">
-        <item name="android:windowBackground">@color/splash_bg</item>
+    <style name="Theme.StealthPad.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/dash_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_v12</item>
+        <item name="postSplashScreenTheme">@style/Theme.StealthPad</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <!-- About Dialog -->
+    <style name="AboutDialogTheme" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">false</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/splash_bg</item>
-        <item name="android:navigationBarColor">@color/splash_bg</item>
-        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

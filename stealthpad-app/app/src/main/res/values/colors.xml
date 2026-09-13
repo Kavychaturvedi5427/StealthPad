@@ -51,4 +51,33 @@
     <color name="auth_input_bg">@color/dash_search_bg</color>
     <color name="auth_primary_btn">@color/warm_accent</color>
     <color name="auth_secondary_btn">@color/dash_text_secondary</color>
+
+    <!-- Profile Redesign Palette -->
+    <color name="profile_bg">#FFFDF9</color>
+    <color name="profile_text_primary">#5C4638</color>
+    <color name="profile_text_secondary">#8F7B6C</color>
+    <color name="profile_accent">#C9A27E</color>
+    <color name="profile_accent_light">#F3E7DA</color>
+    <color name="profile_border">#E8DDD3</color>
+    <color name="profile_danger">#E88B8B</color>
+    <color name="profile_danger_bg">#FFF1F1</color>
+    <color name="profile_security_bg">#FEF5ED</color>
+
+    <!-- AI Redesign Palette -->
+    <color name="ai_panel_bg">#FAF7F2</color>
+    <color name="ai_card_bg">#FFFFFF</color>
+    <color name="ai_input_bg">#FDFBF9</color>
+    <color name="ai_accent">#B08968</color>
+    <color name="ai_text_primary">#2C241E</color>
+    <color name="ai_text_secondary">#7A6F66</color>
+    <color name="ai_divider">#E6DFD6</color>
+    <color name="ai_sparkle">#D4AF37</color>
+    <color name="ai_chip_bg">#F2EBE1</color>
+    <color name="ai_point_number">#8C6A52</color>
+
+    <!-- Semantic Aliases for Dark Mode Support -->
+    <color name="white_background">@color/white</color>
+    <!-- Save Button Redesign -->
+    <color name="stealth_taupe">#A39382</color>
+    <color name="stealth_taupe_dark">#8E7F71</color>
 </resources>

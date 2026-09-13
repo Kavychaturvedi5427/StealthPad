@@ -29,6 +29,27 @@
     <string name="reg_btn_signup">Sign Up</string>
     <string name="reg_footer">Already have an account? Sign In</string>
 
+    <!-- Forgot/Reset Password -->
+    <string name="forgot_pass_title">Forgot Password?</string>
+    <string name="forgot_pass_subtitle">Enter your email address to receive a recovery OTP</string>
+    <string name="forgot_pass_btn_send">Send recovery OTP</string>
+    <string name="forgot_pass_back_to_login">Back to Login</string>
+    <string name="reset_pass_title">Reset Password</string>
+    <string name="reset_pass_subtitle">Enter the OTP sent to your email and your new password</string>
+    <string name="reset_pass_otp_label">Recovery OTP</string>
+    <string name="reset_pass_otp_hint">Enter 6-digit OTP</string>
+    <string name="reset_pass_new_pass_label">New Password</string>
+    <string name="reset_pass_new_pass_hint">Enter your new password</string>
+    <string name="reset_pass_btn_reset">Reset Password</string>
+    <string name="delete_account_title">Delete Account</string>
+    <string name="delete_account_confirm_msg">This will permanently delete your account and associated cloud data. This action cannot be undone.</string>
+
+    <!-- Profile Dialog -->
+    <string name="profile_manage_account">Account Settings</string>
+    <string name="profile_security">Security</string>
+    <string name="profile_danger_zone">Danger Zone</string>
+    <string name="profile_logout">Logout</string>
+
     <!-- Categories -->
     <string name="cat_personal">Personal</string>
     <string name="cat_work">Work</string>
@@ -38,4 +59,76 @@
 
     <string name="recent_notes">Recent Notes</string>
     <string name="no_notes_found">No notes found</string>
+
+    <!-- Image Viewer -->
+    <string name="image_not_found">Image not found</string>
+    <string name="full_screen_image">Full screen image</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_change_theme">Change Theme</string>
+    <string name="settings_change_theme_desc">Choose how StealthPad looks</string>
+    <string name="settings_security_privacy">Security &amp; Privacy</string>
+    <string name="settings_biometric_lock">Biometric Lock</string>
+    <string name="settings_biometric_lock_desc">Use fingerprint/face to unlock</string>
+    <string name="settings_auto_lock">Auto Lock</string>
+    <string name="settings_auto_lock_desc">Automatically lock StealthPad</string>
+    <string name="settings_notes">Notes</string>
+    <string name="settings_sort_notes">Sort Notes</string>
+    <string name="settings_sort_notes_desc">Choose how notes are sorted</string>
+    <string name="settings_default_category">Default Category</string>
+    <string name="settings_default_category_desc">Choose the default category</string>
+    <string name="settings_storage">Storage</string>
+    <string name="settings_clear_storage">Clear Local Storage</string>
+    <string name="settings_clear_storage_desc">Remove local notes and attachments</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_stealthpad">About StealthPad</string>
+    <string name="settings_about_stealthpad_desc">Version and application information</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="settings_terms">Terms &amp; Conditions</string>
+    <string name="settings_clear_storage_confirm_title">Clear Local Storage?</string>
+    <string name="settings_clear_storage_confirm_msg">This will permanently remove locally stored notes, attachments, and cached data from this device. This action cannot be undone.</string>
+    <string name="settings_clear_storage_success">Local storage cleared.</string>
+
+    <!-- Theme Selection -->
+    <string name="theme_system">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <!-- Auto Lock -->
+    <string name="lock_immediately">Immediately</string>
+    <string name="lock_after_1_min">After 1 minute</string>
+    <string name="lock_after_5_min">After 5 minutes</string>
+    <string name="lock_after_15_min">After 15 minutes</string>
+
+    <!-- Sorting -->
+    <string name="sort_recently_updated">Recently Updated</string>
+    <string name="sort_newest">Newest Created</string>
+    <string name="sort_oldest">Oldest Created</string>
+    <string name="sort_alphabetical">Alphabetical</string>
+
+    <!-- Vault Access -->
+    <string name="vault_title">Private Vault</string>
+    <string name="vault_subtitle">Enter PIN to unlock</string>
+    <string name="vault_incorrect_pin">Incorrect PIN</string>
+    <string name="vault_forgot_pin">Forgot PIN?</string>
+    <string name="vault_reset_confirm_title">Reset Private Vault?</string>
+    <string name="vault_reset_confirm_msg">If you forgot your PIN, you must reset the vault. Your private notes will not be deleted, but the vault will be disabled until you set it up again.</string>
+    <string name="vault_reset_success">Vault has been reset</string>
+    <string name="ai_assistant">AI Assistant</string>
+
+    <!-- About Dialog -->
+    <string name="about_tagline">Private Notes. Smarter.</string>
+    <string name="about_section_title">ABOUT STEALTHPAD</string>
+    <string name="about_description">StealthPad is a private, secure note-taking application designed to give your thoughts a quiet and protected space.\n\nWrite, organize, and manage your notes while keeping privacy at the center of the experience.</string>
+    <string name="about_ai_description">Stealth AI helps you summarize notes, extract key points, and turn ideas into useful note content.</string>
+    <string name="about_developer_section">DEVELOPER</string>
+    <string name="about_developer_name">Kavya Chaturvedi</string>
+    <string name="about_developer_role">Android Developer · Creator of StealthPad</string>
+    <string name="about_details_section">APP DETAILS</string>
+    <string name="about_platform_label">Platform</string>
+    <string name="about_platform_value">Android</string>
+    <string name="about_tech_stack">Built with Java · Spring Boot · PostgreSQL</string>
+    <string name="about_footer_copyright">© 2026 StealthPad</string>
 </resources>
