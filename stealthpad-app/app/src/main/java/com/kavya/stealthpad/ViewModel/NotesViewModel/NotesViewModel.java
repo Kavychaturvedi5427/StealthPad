@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.kavya.stealthpad.data.Local.model.NoteAttachment;
+import com.kavya.stealthpad.data.Local.model.NoteWithAttachments;
 import com.kavya.stealthpad.data.Local.model.NotesModel;
 import com.kavya.stealthpad.data.repository.Notes.NotesRepository;
 
@@ -27,7 +29,7 @@ public class NotesViewModel extends ViewModel {
         this.repo = repository;
     }
 
-    public void validateNote(String title, String content, String category, String email, boolean isVault) {
+    public void validateNote(String title, String content, String category, String email, boolean isVault, List<NoteAttachment> attachments) {
         notesState.setValue(new NotesState.LoadingState());
         if (title == null || title.trim().isEmpty()) {
             notesState.setValue(new NotesState.ErrorState("Title can't be empty."));
@@ -35,7 +37,7 @@ public class NotesViewModel extends ViewModel {
         }
         NotesModel model = new NotesModel(title, content, System.currentTimeMillis(), category, email);
         model.setVault(isVault);
-        repo.saveNote(model, new NotesRepository.SavenotesCallback() {
+        repo.saveNote(model, attachments, new NotesRepository.SavenotesCallback() {
             @Override
             public void onSuccess() {
                 notesState.postValue(new NotesState.SuccessState());
@@ -48,20 +50,36 @@ public class NotesViewModel extends ViewModel {
         });
     }
 
-    public LiveData<List<NotesModel>> getAllNotes(String email){
-        return repo.getAllNotes(email);
+    public LiveData<List<NoteAttachment>> getAttachmentsForNote(int noteId) {
+        return repo.getAttachmentsForNote(noteId);
     }
 
-    public LiveData<List<NotesModel>> getNotesByCategory(String email, String category){
-        return repo.getNotesByCategory(email, category);
+    public void addAttachment(NoteAttachment attachment) {
+        repo.addAttachment(attachment);
     }
 
-    public LiveData<List<NotesModel>> getRecentNotes(String email){
+    public void deleteAttachment(NoteAttachment attachment) {
+        repo.deleteAttachment(attachment);
+    }
+
+    public LiveData<List<NoteWithAttachments>> getAllNotes(String email, String sortOrder){
+        return repo.getAllNotes(email, sortOrder);
+    }
+
+    public LiveData<List<NoteWithAttachments>> getNotesByCategory(String email, String category, String sortOrder){
+        return repo.getNotesByCategory(email, category, sortOrder);
+    }
+
+    public LiveData<List<NoteWithAttachments>> getRecentNotes(String email){
         return repo.getRecentNotes(email);
     }
 
-    public LiveData<List<NotesModel>> getVaultNotes(String email){
+    public LiveData<List<NoteWithAttachments>> getVaultNotes(String email){
         return repo.getVaultNotes(email);
+    }
+
+    public LiveData<List<NoteWithAttachments>> searchNotes(String email, String query) {
+        return repo.searchNotes(email, query);
     }
 
     public LiveData<NotesModel> getNoteById(int id){
