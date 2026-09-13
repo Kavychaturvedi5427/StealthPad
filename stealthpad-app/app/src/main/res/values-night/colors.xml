@@ -1,45 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark Mode Premium Palette (Warm Noir Refined) -->
-    <color name="warm_white">#0C0B0A</color> <!-- Deepest background -->
-    <color name="soft_cream">#141211</color> <!-- Main surface -->
-    <color name="light_sand">#1C1917</color> <!-- Secondary surface -->
-    <color name="muted_beige">#352F2A</color> <!-- Borders and muted details -->
-    <color name="accent_brown">#D4A373</color> <!-- Soft gold/caramel accent -->
+    <!-- Deep warm charcoal background -->
+    <color name="dash_bg">#121110</color>
+    <color name="profile_bg">#1C1A19</color>
+    <color name="warm_white">#121110</color>
+    <color name="splash_bg">#121110</color>
+    <color name="black">#000000</color>
 
-    <!-- Dashboard Dark Palette -->
-    <color name="dash_bg">#0C0B0A</color>
-    <color name="dash_surface">#141211</color>
-    <color name="dash_surface_variant">#1C1917</color>
-    <color name="dash_accent">#D4A373</color>
-    <color name="dash_text_primary">#EBE5DE</color>
-    <color name="dash_text_secondary">#9E948C</color>
-    <color name="dash_search_bg">#181614</color>
-    <color name="dash_card_bg">#141211</color>
-    <color name="dash_divider">#26221F</color>
+    <!-- Slightly lighter surfaces -->
+    <color name="dash_surface">#1C1A19</color>
+    <color name="soft_cream">#1C1A19</color>
+    <color name="auth_dialog_bg">#1C1A19</color>
+    <color name="dash_search_bg">#1C1A19</color>
 
-    <!-- Semantic Mapping -->
-    <color name="splash_bg">#0C0B0A</color>
-    <color name="warm_accent">@color/dash_accent</color>
-    <color name="warm_text">#EBE5DE</color>
-    <color name="warm_text_secondary">#9E948C</color>
+    <!-- Card background -->
+    <color name="dash_card_bg">#252321</color>
+    <color name="light_sand">#252321</color>
+    <color name="profile_security_bg">#252321</color>
+    <color name="auth_input_bg">#252321</color>
+    <color name="white_background">#252321</color>
 
-    <!-- Premium Theme Palette - Dark -->
-    <color name="nav_active_bg">#26221F</color>
-    <color name="nav_active_icon">#D4A373</color>
-    <color name="nav_inactive_icon">#7A6F66</color>
-    <color name="fab_caramel">#D4A373</color>
+    <!-- Primary Text (Warm off-white/cream) -->
+    <color name="dash_text_primary">#F8F1E7</color>
+    <color name="profile_text_primary">#F8F1E7</color>
+    <color name="auth_title">#F8F1E7</color>
+    <color name="warm_text">#F8F1E7</color>
 
-    <!-- Auth Dialog Schema -->
-    <color name="auth_dialog_bg">#141211</color>
-    <color name="auth_title">@color/dash_text_primary</color>
-    <color name="auth_subtitle">@color/dash_text_secondary</color>
-    <color name="auth_input_bg">#181614</color>
-    <color name="auth_primary_btn">@color/dash_accent</color>
-    <color name="auth_secondary_btn">@color/dash_text_secondary</color>
+    <!-- Secondary Text (Muted taupe/warm gray) -->
+    <color name="dash_text_secondary">#9A8272</color>
+    <color name="profile_text_secondary">#9A8272</color>
+    <color name="auth_subtitle">#9A8272</color>
+    <color name="warm_text_secondary">#9A8272</color>
 
-    <!-- Splash Gradient - Dark -->
-    <color name="splash_gradient_start">#12100E</color>
-    <color name="splash_gradient_center">#0C0B0A</color>
-    <color name="splash_gradient_end">#060505</color>
+    <!-- Borders and Dividers -->
+    <color name="dash_divider">#332F2C</color>
+    <color name="profile_border">#332F2C</color>
+    <color name="muted_beige">#665C54</color>
+
+    <!-- Accents (Keep warm beige/gold/brown) -->
+    <color name="dash_accent">#B08968</color>
+    <color name="profile_accent">#C9A27E</color>
+    <color name="warm_accent">#C9A27E</color>
+    <color name="nav_active_bg">#332F2C</color>
+    <color name="accent_brown">#C9A27E</color>
+    <color name="nav_active_icon">#C9A27E</color>
+    <color name="nav_inactive_icon">#9A8272</color>
+    <color name="profile_accent_light">#332F2C</color>
+
+    <!-- Danger -->
+    <color name="profile_danger_bg">#2D1F1F</color>
+
+    <!-- Splash Gradient (Solid in dark mode) -->
+    <color name="splash_gradient_start">#121110</color>
+    <color name="splash_gradient_center">#121110</color>
+    <color name="splash_gradient_end">#121110</color>
+
+    <!-- AI Redesign Palette -->
+    <color name="ai_panel_bg">@color/dash_bg</color>
+    <color name="ai_card_bg">@color/dash_card_bg</color>
+    <color name="ai_input_bg">@color/dash_surface</color>
+    <color name="ai_accent">@color/dash_accent</color>
+    <color name="ai_text_primary">@color/dash_text_primary</color>
+    <color name="ai_text_secondary">@color/dash_text_secondary</color>
+    <color name="ai_divider">@color/dash_divider</color>
+    <color name="ai_sparkle">#D4AF37</color>
+    <color name="ai_chip_bg">#332F2C</color>
+    <color name="ai_point_number">@color/warm_accent</color>
 </resources>
