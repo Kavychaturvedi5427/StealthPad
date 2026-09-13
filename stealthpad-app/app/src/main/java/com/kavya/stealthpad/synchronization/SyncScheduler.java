@@ -20,6 +20,7 @@ public class SyncScheduler {
     private static final String IMMEDIATE_SYNC = "stealthpad_immediate_sync";
 
     public static void schedulerPeriodicSync(@NonNull Context context, String userEmail) {
+        Context appContext = context.getApplicationContext();
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
@@ -30,12 +31,13 @@ public class SyncScheduler {
                 .setInputData(inputData)
                 .build();
 
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(PERIODIC_SYNC, ExistingPeriodicWorkPolicy.KEEP, request);
+        WorkManager.getInstance(appContext).enqueueUniquePeriodicWork(PERIODIC_SYNC, ExistingPeriodicWorkPolicy.KEEP, request);
     }
 
     public static void syncNow(
             @NonNull Context context,
             String userEmail) {
+        Context appContext = context.getApplicationContext();
 
         Constraints constraints =
                 new Constraints.Builder()
@@ -53,12 +55,17 @@ public class SyncScheduler {
                         .setInputData(inputData)
                         .build();
 
-        WorkManager.getInstance(context)
+        WorkManager.getInstance(appContext)
                 .enqueueUniqueWork(
                         IMMEDIATE_SYNC,
-                        ExistingWorkPolicy.KEEP,
+                        ExistingWorkPolicy.REPLACE,
                         request
                 );
+    }
+
+    public static void stopAllSync(@NonNull Context context) {
+        WorkManager.getInstance(context.getApplicationContext()).cancelUniqueWork(PERIODIC_SYNC);
+        WorkManager.getInstance(context.getApplicationContext()).cancelUniqueWork(IMMEDIATE_SYNC);
     }
 
 
