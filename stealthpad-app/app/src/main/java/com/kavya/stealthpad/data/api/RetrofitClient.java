@@ -1,6 +1,9 @@
 package com.kavya.stealthpad.data.api;
 
+import com.google.gson.Gson;
 import com.kavya.stealthpad.utils.AuthInterceptor;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -16,11 +19,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @InstallIn(SingletonComponent.class)    // this ensures that this module live in application scope...
 public class RetrofitClient {
 
+    @Provides
+    @Singleton
+    public Gson provideGson() {
+        return new Gson();
+    }
+
     @Provides       // when someone asks for this type call this...
     @Singleton      // create one instance and reuse it ...
-    public Retrofit provideRetrofit(OkHttpClient okHttpClient){
+    public Retrofit provideRetrofit(OkHttpClient okHttpClient, Gson gson){
         return new Retrofit.Builder().baseUrl("http://10.0.2.2:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okHttpClient)
                 .build();
     }
@@ -39,8 +48,19 @@ public class RetrofitClient {
 
     @Provides
     @Singleton
-    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor){
-        return new OkHttpClient.Builder().addInterceptor(authInterceptor).build();
+    public AiApi provideAiApi(Retrofit retrofit) {
+        return retrofit.create(AiApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
+        return new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(authInterceptor)
+                .build();
     }
 
 }
