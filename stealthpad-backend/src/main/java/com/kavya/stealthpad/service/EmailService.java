@@ -31,6 +31,7 @@ public class EmailService {
             MimeMessageHelper helper =
                     new MimeMessageHelper(message, true, "UTF-8");
 
+            helper.setFrom("onboarding@resend.dev");
             helper.setTo(email);
             helper.setSubject("StealthPad Password Reset");
             helper.setText(htmlContent, true);
@@ -38,6 +39,7 @@ public class EmailService {
             mailSender.send(message);
 
         } catch (Exception e) {
+
             throw new RuntimeException(
                     "Unable to send password reset email", e
             );
