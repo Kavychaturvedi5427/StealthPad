@@ -16,6 +16,7 @@ import com.kavya.stealthpad.Entity.User;
 import com.kavya.stealthpad.repository.NotesRepository;
 import com.kavya.stealthpad.security.CurrentUserService;
 import com.kavya.stealthpad.utils.NotesMapper;
+import com.kavya.stealthpad.exception.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -69,7 +70,8 @@ public class NoteServiceImpl implements NotesService {
         User user = CurrentUserService.getCurrentUser();
 
         // fetching the notes based on the id and user...
-        Note note = notesRepository.findByIdAndUser(id, user).orElseThrow(() -> new RuntimeException("Note not found"));
+        Note note = notesRepository.findByIdAndUser(id, user)
+            .orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
         note.setTitle(noteRequestDTO.getTitle());
         note.setContent(noteRequestDTO.getContent());
@@ -88,10 +90,10 @@ public class NoteServiceImpl implements NotesService {
 
         User user = CurrentUserService.getCurrentUser();
 
-        Note note = notesRepository.findByIdAndUser(id, user).orElseThrow(() -> new RuntimeException("Note not found"));
+        Note note = notesRepository.findByIdAndUser(id, user)
+            .orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
-        note.setDeleted(true);
-        notesRepository.save(note);
+        notesRepository.delete(note);
     }
 
     @Override
