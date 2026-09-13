@@ -83,6 +83,16 @@
                     android:alpha="0.4" />
             </RelativeLayout>
 
+            <ImageView
+                android:id="@+id/note_image_preview"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:contentDescription="Note image preview"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium" />
+
             <TextView
                 android:id="@+id/note_content"
                 android:layout_width="match_parent"
