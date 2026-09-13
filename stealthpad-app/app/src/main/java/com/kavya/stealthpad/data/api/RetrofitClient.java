@@ -14,6 +14,7 @@ import dagger.hilt.components.SingletonComponent;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 @Module    // this annotation tells hilt how to create object of any 3rd party class..
 @InstallIn(SingletonComponent.class)    // this ensures that this module live in application scope...
@@ -29,6 +30,7 @@ public class RetrofitClient {
     @Singleton      // create one instance and reuse it ...
     public Retrofit provideRetrofit(OkHttpClient okHttpClient, Gson gson){
         return new Retrofit.Builder().baseUrl("https://stealthpad-backend.onrender.com/")
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okHttpClient)
                 .build();
