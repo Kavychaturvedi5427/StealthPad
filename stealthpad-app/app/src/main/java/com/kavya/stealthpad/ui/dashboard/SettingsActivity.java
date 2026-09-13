@@ -129,6 +129,10 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.btn_terms).setOnClickListener(v -> {
             openUrl("https://kavychaturvedi5427.github.io/StealthPad/stealthpad-terms.html");
         });
+
+        findViewById(R.id.btn_faq).setOnClickListener(v -> {
+            openUrl("https://kavychaturvedi5427.github.io/StealthPad/stealthpad-faq.html");
+        });
     }
 
     private void openUrl(String url) {

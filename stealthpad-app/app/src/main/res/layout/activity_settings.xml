@@ -348,6 +348,25 @@
                             style="@style/SettingsItemChevron"
                             android:contentDescription="Arrow" />
                     </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_faq"
+                        style="@style/SettingsItemContainer">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/faq"
+                            android:contentDescription="FAQ Icon" />
+                        <LinearLayout style="@style/SettingsItemTextContainer">
+                            <TextView
+                                style="@style/SettingsItemTitle"
+                                android:text="FAQ" />
+                        </LinearLayout>
+                        <ImageView
+                            style="@style/SettingsItemChevron"
+                            android:contentDescription="Arrow" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
