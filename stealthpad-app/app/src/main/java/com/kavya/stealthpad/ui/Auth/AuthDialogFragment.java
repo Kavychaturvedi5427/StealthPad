@@ -23,17 +23,24 @@ import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthViewModel;
 import com.kavya.stealthpad.data.DataModel.AuthResponseDto;
 import com.kavya.stealthpad.synchronization.SyncScheduler;
 import com.kavya.stealthpad.utils.BiometricHelper;
+import com.kavya.stealthpad.utils.EncryptionManager;
 import com.kavya.stealthpad.utils.SessionManager;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class AuthDialogFragment extends DialogFragment {
 
+    @Inject
+    EncryptionManager encryptionManager;
+    
     private AuthViewModel authViewModel;
     private CircularProgressIndicator progressindi;
     private MaterialButton unlock;
     private SessionManager sessionManager;
+    private String lastInputPass;
 
     @Nullable
     @Override
@@ -48,8 +55,14 @@ public class AuthDialogFragment extends DialogFragment {
         TextInputEditText pass_inp = view.findViewById(R.id.password_input);
         TextInputLayout email_lay = view.findViewById(R.id.email_lay);
         TextInputLayout pass_lay = view.findViewById(R.id.pass_lay);
+        android.widget.CheckBox cbRemember = view.findViewById(R.id.cb_remember);
         View biometricBtn = view.findViewById(R.id.btn_biometric_auth);
         View biometricContainer = view.findViewById(R.id.biometric_container);
+
+        // Pre-fill email if saved
+        if (sessionManager.getSavedEmail() != null) {
+            email_inp.setText(sessionManager.getSavedEmail());
+        }
 
         view.findViewById(R.id.btn_close_auth).setOnClickListener(v -> dismiss());
 
@@ -69,11 +82,21 @@ public class AuthDialogFragment extends DialogFragment {
             } else if (pass.length() < 6) {
                 pass_lay.setError("Password must be at least 6 characters");
             } else {
+                if (cbRemember.isChecked()) {
+                    lastInputPass = pass;
+                } else {
+                    sessionManager.clearSavedCredentials();
+                    lastInputPass = null;
+                }
                 authViewModel.login(email, pass);
             }
         });
 
-        boolean canBiometric = BiometricHelper.isBiometricAvailable(requireContext()) && sessionManager.isBiometricEnabled();
+        // Show biometric only if enabled AND we have saved credentials to use
+        boolean canBiometric = BiometricHelper.isBiometricAvailable(requireContext()) 
+                && sessionManager.isBiometricEnabled()
+                && sessionManager.getSavedPassword() != null;
+
         biometricContainer.setVisibility(canBiometric ? View.VISIBLE : View.GONE);
 
         biometricBtn.setOnClickListener(v -> {
@@ -107,11 +130,18 @@ public class AuthDialogFragment extends DialogFragment {
                 new BiometricHelper.BiometricCallback() {
                     @Override
                     public void onAuthenticationSuccess() {
-                        if (sessionManager.isLoggedIn()) {
-                            dismiss();
-                            Toast.makeText(requireContext(), "Biometric Login Successful", Toast.LENGTH_SHORT).show();
+                        String email = sessionManager.getSavedEmail();
+                        String encryptedPass = sessionManager.getSavedPassword();
+                        
+                        if (email != null && encryptedPass != null) {
+                            String password = encryptionManager.decrypt(encryptedPass);
+                            if (password != null) {
+                                authViewModel.login(email, password);
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to decrypt credentials", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(requireContext(), "Please login with password first to enable biometrics", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "Please login with password once and check 'Remember me' to enable biometrics", Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -161,6 +191,14 @@ public class AuthDialogFragment extends DialogFragment {
                 authResponseDto.getName(),
                 authResponseDto.getEmail()
                 );
+        
+        // Save encrypted password for biometric login if needed
+        if (lastInputPass != null) {
+            String encrypted = encryptionManager.encrypt(lastInputPass);
+            sessionManager.saveCredentials(authResponseDto.getEmail(), encrypted);
+            lastInputPass = null;
+        }
+
         authViewModel.checkAuth(sessionManager);
     }
 

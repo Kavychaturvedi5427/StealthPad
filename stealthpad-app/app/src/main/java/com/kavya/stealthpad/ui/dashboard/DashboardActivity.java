@@ -254,7 +254,13 @@ public class DashboardActivity extends AppCompatActivity {
     public void navigateTo(int itemId) {
         if (itemId == R.id.nav_home) {
             currentNavId = R.id.nav_home;
-            isVaultAuthenticated = false;
+            
+            // Auto-lock logic: Reset authentication if set to "Immediately"
+            if (sessionManager.getAutoLockMinutes() == 0) {
+                isVaultAuthenticated = false;
+                sessionManager.setLastVaultUnlockTime(0);
+            }
+            
             binding.homeContent.setVisibility(View.VISIBLE);
             binding.mainFragmentContainer.setVisibility(View.GONE);
             binding.stealthNavBar.setSelected(R.id.nav_home);
@@ -274,6 +280,12 @@ public class DashboardActivity extends AppCompatActivity {
             handleVaultNavigation();
 
         } else if (itemId == R.id.nav_more) {
+            // Reset vault if auto-lock is immediate
+            if (sessionManager.getAutoLockMinutes() == 0) {
+                isVaultAuthenticated = false;
+                sessionManager.setLastVaultUnlockTime(0);
+            }
+            
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -307,6 +319,18 @@ public class DashboardActivity extends AppCompatActivity {
             return;
         }
 
+        // Check Auto-Lock logic
+        int autoLockMinutes = sessionManager.getAutoLockMinutes();
+        if (autoLockMinutes > 0) {
+            long lastUnlock = sessionManager.getLastVaultUnlockTime();
+            long now = System.currentTimeMillis();
+            if (now - lastUnlock < (long) autoLockMinutes * 60 * 1000) {
+                isVaultAuthenticated = true;
+            } else {
+                isVaultAuthenticated = false;
+            }
+        }
+
         if (isVaultAuthenticated) {
             currentNavId = R.id.nav_vault;
             showFragment(new VaultFragment(), "VAULT");
@@ -322,6 +346,8 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onVaultAuthenticated() {
                 isVaultAuthenticated = true;
+                sessionManager.setLastVaultUnlockTime(System.currentTimeMillis());
+
                 if (pendingNote != null) {
                     moveNoteToVault(pendingNote);
                 } else {
