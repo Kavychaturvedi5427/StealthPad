@@ -28,8 +28,13 @@ public class SessionManager {
     }
 
     public void logout(){
-        // remove the session stored in the SessionManager class....
-        prefs.edit().clear().apply();
+        // Only clear session-related data
+        prefs.edit()
+                .remove("jwt")
+                .remove("name")
+                .remove("email")
+                .putBoolean("is_logging_out", false)
+                .apply();
     }
 
 
@@ -60,5 +65,57 @@ public class SessionManager {
 
     public void setVaultPin(String pin) {
         prefs.edit().putString("vault_pin", pin).apply();
+    }
+
+    public boolean isBiometricEnabled() {
+        return prefs.getBoolean("biometric_enabled", false);
+    }
+
+    public void setBiometricEnabled(boolean enabled) {
+        prefs.edit().putBoolean("biometric_enabled", enabled).apply();
+    }
+
+    // Theme methods
+    public int getThemeMode() {
+        return prefs.getInt("theme_mode", 0); // 0: System, 1: Light, 2: Dark
+    }
+
+    public void setThemeMode(int mode) {
+        prefs.edit().putInt("theme_mode", mode).apply();
+    }
+
+    // Auto Lock methods
+    public int getAutoLockMinutes() {
+        return prefs.getInt("auto_lock_minutes", 0); // 0: Immediately, 1, 5, 15
+    }
+
+    public void setAutoLockMinutes(int minutes) {
+        prefs.edit().putInt("auto_lock_minutes", minutes).apply();
+    }
+
+    // Sorting methods
+    public String getSortOrder() {
+        return prefs.getString("sort_order", "RECENTLY_UPDATED");
+    }
+
+    public void setSortOrder(String sortOrder) {
+        prefs.edit().putString("sort_order", sortOrder).apply();
+    }
+
+    // Default Category methods
+    public String getDefaultCategory() {
+        return prefs.getString("default_category", "Personal");
+    }
+
+    public void setDefaultCategory(String category) {
+        prefs.edit().putString("default_category", category).apply();
+    }
+
+    public boolean isLoggingOut() {
+        return prefs.getBoolean("is_logging_out", false);
+    }
+
+    public void setLoggingOut(boolean loggingOut) {
+        prefs.edit().putBoolean("is_logging_out", loggingOut).apply();
     }
 }
