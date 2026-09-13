@@ -7,7 +7,7 @@
     android:layout_marginVertical="24dp"
     app:cardCornerRadius="32dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="@color/dash_card_bg"
     app:strokeWidth="1dp"
     app:strokeColor="@color/dash_divider">
 
@@ -88,7 +88,7 @@
             android:text="Email Address"
             android:textColor="@color/auth_title"
             android:textSize="14sp"
-            android:textStyle="bold" />
+             />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/email_lay"
@@ -121,7 +121,7 @@
             android:text="Password"
             android:textColor="@color/auth_title"
             android:textSize="14sp"
-            android:textStyle="bold" />
+             />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/pass_lay"
@@ -173,7 +173,7 @@
                 android:text="@string/auth_forgot_password"
                 android:textColor="@color/auth_primary_btn"
                 android:textSize="13sp"
-                android:textStyle="bold" />
+                 />
         </RelativeLayout>
 
         <!-- Primary CTA -->
@@ -190,6 +190,45 @@
             app:backgroundTint="@color/auth_primary_btn"
             app:cornerRadius="16dp"
             app:elevation="4dp" />
+
+        <!-- Biometric Option -->
+        <LinearLayout
+            android:id="@+id/biometric_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_biometric_auth"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/auth_input_bg"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/dash_accent"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/fingerprint"
+                    app:tint="@color/dash_accent" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Biometric Unlock"
+                android:textColor="@color/dash_accent"
+                android:textSize="11sp"
+                android:fontFamily="@font/lexend" />
+        </LinearLayout>
 
         <!-- Divider -->
         <LinearLayout
@@ -210,7 +249,7 @@
                 android:text="OR"
                 android:textColor="@color/auth_secondary_btn"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                 />
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
