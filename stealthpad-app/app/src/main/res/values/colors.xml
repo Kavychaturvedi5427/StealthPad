@@ -24,6 +24,7 @@
 
     <!-- Dashboard Palette -->
     <color name="dash_bg">#FAF7F2</color>
+    <color name="splash_light_bg">#FAF7F2</color>
     <color name="dash_surface">#F6F1EA</color>
     <color name="dash_surface_variant">#EEE5D9</color>
     <color name="dash_accent">#B08968</color>
