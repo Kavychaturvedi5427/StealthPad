@@ -1,20 +1,25 @@
 package com.kavya.stealthpad.service;
 
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+
+    @Value("${RESEND_API_KEY}")
+    private String resendApiKey;
 
     public void sendPasswordResetOtp(String email, String otp) {
 
@@ -26,19 +31,18 @@ public class EmailService {
 
         try {
 
-            MimeMessage message = mailSender.createMimeMessage();
+            Resend resend = new Resend(resendApiKey);
 
-            MimeMessageHelper helper =
-                    new MimeMessageHelper(message, true, "UTF-8");
+            CreateEmailOptions params = CreateEmailOptions.builder()
+                    .from("onboarding@resend.dev")
+                    .to(email)
+                    .subject("StealthPad Password Reset")
+                    .html(htmlContent)
+                    .build();
 
-            helper.setFrom("onboarding@resend.dev");
-            helper.setTo(email);
-            helper.setSubject("StealthPad Password Reset");
-            helper.setText(htmlContent, true);
+            resend.emails().send(params);
 
-            mailSender.send(message);
-
-        } catch (Exception e) {
+        } catch (ResendException e) {
 
             throw new RuntimeException(
                     "Unable to send password reset email", e
