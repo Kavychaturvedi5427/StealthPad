@@ -29,7 +29,7 @@ public interface AuthApi {
             @Body ResetPasswordRequest request
     );
 
-    @DELETE("api/user/account")
+    @DELETE("api/auth/account")
     Call<String> deleteAccount();
 
 }
