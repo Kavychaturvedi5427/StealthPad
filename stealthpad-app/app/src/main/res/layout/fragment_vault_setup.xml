@@ -1,92 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/dash_bg"
-    android:padding="24dp"
-    android:gravity="center_horizontal">
+    android:fillViewport="true">
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="48dp"
-        android:src="@drawable/vault"
-        app:tint="@color/dash_accent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Setup Private Vault"
-        android:textColor="@color/dash_text_primary"
-        android:textSize="24sp"
-        android:fontFamily="sans-serif-medium" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Create a PIN to protect your private notes."
-        android:textColor="@color/dash_text_secondary"
-        android:textSize="14sp"
-        android:gravity="center" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/pin_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:boxBackgroundColor="@color/white"
-        app:boxCornerRadiusTopStart="16dp"
-        app:boxCornerRadiusTopEnd="16dp"
-        app:boxCornerRadiusBottomStart="16dp"
-        app:boxCornerRadiusBottomEnd="16dp"
-        app:boxStrokeWidth="0dp"
-        app:hintEnabled="false">
+        android:padding="24dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/pin_input"
+        <!-- Security Illustration -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/icon_container"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="48dp"
+            app:cardBackgroundColor="@color/profile_accent_light"
+            app:cardCornerRadius="40dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeWidth="0dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/vault"
+                app:tint="@color/warm_accent"
+                android:importantForAccessibility="no" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/setup_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/lexend"
+            android:text="Set Up Private Vault"
+            android:textColor="@color/profile_text_primary"
+            android:textSize="24sp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/icon_container" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/setup_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Create a PIN to protect your private notes."
+            android:textColor="@color/profile_text_secondary"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/setup_title" />
+
+        <!-- Form Container -->
+        <LinearLayout
+            android:id="@+id/form_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Create 4-digit PIN"
-            android:inputType="numberPassword"
-            android:maxLength="4"
-            android:padding="16dp" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/setup_subtitle">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/confirm_pin_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:boxBackgroundColor="@color/white"
-        app:boxCornerRadiusTopStart="16dp"
-        app:boxCornerRadiusTopEnd="16dp"
-        app:boxCornerRadiusBottomStart="16dp"
-        app:boxCornerRadiusBottomEnd="16dp"
-        app:boxStrokeWidth="0dp"
-        app:hintEnabled="false">
+            <!-- PIN Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/pin_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxBackgroundColor="@color/white_background"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxStrokeColor="@color/profile_border"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconTint="@color/profile_text_secondary">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/confirm_pin_input"
-            android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pin_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Create 4-digit PIN"
+                    android:inputType="numberPassword"
+                    android:maxLength="4"
+                    android:paddingVertical="16dp"
+                    android:textColor="@color/profile_text_primary"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Confirm PIN Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/confirm_pin_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:boxBackgroundColor="@color/white_background"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxStrokeColor="@color/profile_border"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconTint="@color/profile_text_secondary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confirm_pin_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Confirm PIN"
+                    android:inputType="numberPassword"
+                    android:maxLength="4"
+                    android:paddingVertical="16dp"
+                    android:textColor="@color/profile_text_primary"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Enable Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_setup_vault"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:enabled="false"
+                android:fontFamily="@font/lexend"
+                android:text="Enable Vault"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+
+                app:backgroundTint="@color/warm_accent"
+                app:cornerRadius="16dp"
+                app:elevation="2dp" />
+
+        </LinearLayout>
+
+        <!-- Security Note -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Confirm PIN"
-            android:inputType="numberPassword"
-            android:maxLength="4"
-            android:padding="16dp" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="32dp"
+            android:alpha="0.8"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:text="Your private notes are protected by your PIN."
+            android:textColor="@color/profile_text_secondary"
+            android:textSize="12sp"
+            app:drawableStartCompat="@drawable/ic_lock"
+            app:drawableTint="@color/profile_text_secondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/form_container" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_setup_vault"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="32dp"
-        android:text="Enable Vault"
-        app:cornerRadius="16dp"
-        android:backgroundTint="@color/dash_accent"
-        android:textColor="@color/white" />
-
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
