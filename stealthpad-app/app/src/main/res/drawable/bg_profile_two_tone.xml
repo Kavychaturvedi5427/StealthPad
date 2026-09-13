@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400dp"
+    android:height="600dp"
+    android:viewportWidth="400"
+    android:viewportHeight="600">
+
+    <!-- Bottom Section -->
+    <path
+        android:fillColor="@color/profile_bg"
+        android:pathData="M0,0h400v600h-400z" />
+
+    <!-- Top Section with Diagonal Split -->
+    <path
+        android:fillColor="@color/profile_accent_light"
+        android:pathData="M0,0 L400,0 L400,180 L0,260 Z" />
+
+</vector>
