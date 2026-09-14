@@ -41,6 +41,9 @@ import com.kavya.stealthpad.utils.SessionManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -60,6 +63,9 @@ public class DashboardActivity extends AppCompatActivity {
     private boolean isVaultAuthenticated = false;
     private int currentNavId = R.id.nav_home;
 
+    private boolean adLoaded = false;
+    private androidx.lifecycle.LiveData<java.util.List<com.kavya.stealthpad.data.Local.model.NoteWithAttachments>> dashboardNotesLiveData;
+
     public void setVaultAuthenticated(boolean authenticated) {
         this.isVaultAuthenticated = authenticated;
     }
@@ -76,6 +82,12 @@ public class DashboardActivity extends AppCompatActivity {
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
         sessionManager = new SessionManager(this);
+
+        // Initialize AdMob
+        // Initialize AdMob
+        MobileAds.initialize(this, initializationStatus -> {
+            // AdMob initialized successfully
+        });
 
         /*
         * ================================================
@@ -203,6 +215,15 @@ public class DashboardActivity extends AppCompatActivity {
                 
                 authimg.setVisibility(View.GONE);
                 authbtnLottie.setVisibility(View.VISIBLE);
+
+                binding.adContainer.setVisibility(View.VISIBLE);
+
+                if (!adLoaded) {
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    binding.adView.loadAd(adRequest);
+                    adLoaded = true;
+                }
+
                 updateGreeting();
                 loadnotes();
             } else if (state instanceof AuthState.LoggedOut) {
@@ -210,6 +231,8 @@ public class DashboardActivity extends AppCompatActivity {
                 params.width = (int) (64 * getResources().getDisplayMetrics().density);
                 params.height = (int) (64 * getResources().getDisplayMetrics().density);
                 authbtn.setLayoutParams(params);
+
+                binding.adContainer.setVisibility(View.GONE);
                 
                 greetingText.setText(getGreeting() + "User");
                 adapterRecentNotes.setNotes(new ArrayList<>());
@@ -231,7 +254,14 @@ public class DashboardActivity extends AppCompatActivity {
         String email = sessionManager.getEmail();
         if (email == null || email.isEmpty()) return;
         
-        notesViewModel.getRecentNotes(email).observe(this, notes -> {
+        if (dashboardNotesLiveData != null) {
+            dashboardNotesLiveData.removeObservers(this);
+        }
+
+        String sortOrder = sessionManager.getSortOrder();
+        adapterRecentNotes.setSortOrder(sortOrder);
+        dashboardNotesLiveData = notesViewModel.getDashboardNotes(email, sortOrder);
+        dashboardNotesLiveData.observe(this, notes -> {
             if (notes == null || notes.isEmpty()) {
                 empty_txt.setVisibility(View.VISIBLE);
                 empty_txt.setText(R.string.no_notes_found);
@@ -496,5 +526,13 @@ public class DashboardActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (binding != null && binding.adView != null) {
+            binding.adView.destroy();
+        }
+        super.onDestroy();
     }
 }

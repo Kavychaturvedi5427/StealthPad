@@ -22,6 +22,9 @@ public class NotesModel {
     @ColumnInfo(name = "timestamp")
     private long timestamp;
 
+    @ColumnInfo(name = "last_updated", defaultValue = "0")
+    private long lastUpdated;
+
     @ColumnInfo(name = "category")
     private String category;
 
@@ -62,6 +65,7 @@ public class NotesModel {
         this.title = title;
         this.content = content;
         this.timestamp = timestamp;
+        this.lastUpdated = timestamp;
         this.category = category;
         this.userEmail = userEmail;
         this.syncStatus = SyncStatus.PENDING;
@@ -73,6 +77,7 @@ public class NotesModel {
         this.title = title;
         this.content = content;
         this.timestamp = timestamp;
+        this.lastUpdated = timestamp;
         this.category = "General";
         this.syncStatus = SyncStatus.PENDING;
     }
@@ -124,6 +129,14 @@ public class NotesModel {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated != 0 ? lastUpdated : timestamp;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     public Long getServerId() {

@@ -32,6 +32,7 @@ public class AllNotes extends BottomSheetDialogFragment {
     private MaterialButton close;
     private androidx.appcompat.widget.SearchView searchView;
     private String email;
+    private androidx.lifecycle.LiveData<java.util.List<com.kavya.stealthpad.data.Local.model.NoteWithAttachments>> currentNotesLiveData;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class AllNotes extends BottomSheetDialogFragment {
 
         // setting up the adapter...
         NotesAdapter notesAdapter = new NotesAdapter(R.layout.item_note_staggered);
+        notesAdapter.setSortOrder(sessionManager.getSortOrder());
         notesAdapter.setNotesListener(new NotesAdapter.NotesListener() {
             @Override
             public void onNoteClick(NotesModel note) {
@@ -111,17 +113,19 @@ public class AllNotes extends BottomSheetDialogFragment {
     }
 
     private void observeNotes(NotesAdapter adapter, String query) {
-        // Remove previous observers to avoid multiple subscriptions
-        notesViewModel.getAllNotes(email, sessionManager.getSortOrder()).removeObservers(getViewLifecycleOwner());
-        if (query != null && !query.trim().isEmpty()) {
-            notesViewModel.searchNotes(email, query).observe(getViewLifecycleOwner(), notes -> {
-                updateUI(adapter, notes);
-            });
-        } else {
-            notesViewModel.getAllNotes(email, sessionManager.getSortOrder()).observe(getViewLifecycleOwner(), notes -> {
-                updateUI(adapter, notes);
-            });
+        if (currentNotesLiveData != null) {
+            currentNotesLiveData.removeObservers(getViewLifecycleOwner());
         }
+
+        if (query != null && !query.trim().isEmpty()) {
+            currentNotesLiveData = notesViewModel.searchNotes(email, query);
+        } else {
+            currentNotesLiveData = notesViewModel.getAllNotes(email, sessionManager.getSortOrder());
+        }
+
+        currentNotesLiveData.observe(getViewLifecycleOwner(), notes -> {
+            updateUI(adapter, notes);
+        });
     }
 
     private void updateUI(NotesAdapter adapter, java.util.List<com.kavya.stealthpad.data.Local.model.NoteWithAttachments> notes) {

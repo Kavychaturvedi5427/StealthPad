@@ -17,6 +17,7 @@ import com.kavya.stealthpad.utils.SyncStatus;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -224,36 +225,39 @@ public class SyncManager {
             }
 
             List<NoteResponseDTO> remoteNotes = response.body();
+            Log.d(TAG, "pullRemoteNotes: Received " + (remoteNotes != null ? remoteNotes.size() : 0) + " notes from server.");
+
+            if (remoteNotes == null) return;
 
             Set<Long> remoteIds = new HashSet<>();
             for (NoteResponseDTO remoteNote : remoteNotes) {
-                if (remoteNote.getId() != null) {
+                if (remoteNote != null && remoteNote.getId() != null) {
                     remoteIds.add(remoteNote.getId());
                 }
             }
 
             List<NotesModel> localSyncedNotes = notesDao.getAllNotesWithServerIdSync(userEmail);
+            Log.d(TAG, "pullRemoteNotes: Found " + localSyncedNotes.size() + " local synced notes.");
+
             for (NotesModel localNote : localSyncedNotes) {
                 if (!remoteIds.contains(localNote.getServerId()) &&
                         localNote.getSyncStatus() != SyncStatus.PENDING_DELETE &&
                         localNote.getSyncStatus() != SyncStatus.PENDING_UPDATE) {
                     
-                    List<NoteAttachment> attachments = attachmentDao.getAttachmentsForNoteSync(localNote.getId());
-                    notesDao.deleteNoteAfterSync(localNote.getId());
-                    for (NoteAttachment attachment : attachments) {
-                        storageManager.deleteAttachment(attachment.getLocalPath());
-                    }
+                    Log.d(TAG, "pullRemoteNotes: Deleting local note not found on server: ID=" + localNote.getId() + " ServerID=" + localNote.getServerId());
+                    cleanupLocalNote(localNote.getId());
                 }
             }
 
             for (NoteResponseDTO remoteNote : remoteNotes) {
-                if (remoteNote.getId() == null) {
+                if (remoteNote == null || remoteNote.getId() == null) {
                     continue;
                 }
 
                 NotesModel localNote = notesDao.getNoteByServerId(remoteNote.getId(), userEmail);
 
                 if (localNote == null) {
+                    Log.d(TAG, "pullRemoteNotes: Creating new local note for ServerID=" + remoteNote.getId());
                     NotesModel newNote = convertToLocalNote(remoteNote, userEmail);
                     notesDao.insert(newNote);
                 } else {
@@ -261,11 +265,15 @@ public class SyncManager {
                         localNote.getSyncStatus() == SyncStatus.PENDING_CREATE ||
                         localNote.getSyncStatus() == SyncStatus.PENDING_UPDATE ||
                         localNote.getSyncStatus() == SyncStatus.PENDING_DELETE) {
+                        Log.d(TAG, "pullRemoteNotes: Skipping update for local note with pending changes: ID=" + localNote.getId());
                         continue;
                     }
 
-                    updateLocalNote(localNote, remoteNote);
-                    notesDao.update(localNote);
+                    boolean changed = updateLocalNote(localNote, remoteNote);
+                    if (changed) {
+                        Log.d(TAG, "pullRemoteNotes: Updating local note with server changes: ID=" + localNote.getId());
+                        notesDao.update(localNote);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -281,6 +289,7 @@ public class SyncManager {
         request.setContent(note.getContent());
         request.setCategory(note.getCategory());
         request.setTimestamp(note.getTimestamp());
+        request.setLastUpdated(note.getLastUpdated());
         request.setVault(note.isVault());
         return request;
     }
@@ -288,24 +297,84 @@ public class SyncManager {
     private NotesModel convertToLocalNote(NoteResponseDTO remoteNote, String userEmail) {
         NotesModel localNote = new NotesModel();
         // Server already sends encrypted data
-        localNote.setTitle(remoteNote.getTitle());
-        localNote.setContent(remoteNote.getContent());
-        localNote.setCategory(remoteNote.getCategory());
-        localNote.setTimestamp(remoteNote.getTimestamp());
-        localNote.setVault(remoteNote.isVault());
+        localNote.setTitle(remoteNote.getTitle() != null ? remoteNote.getTitle() : "Untitled Note");
+        localNote.setContent(remoteNote.getContent() != null ? remoteNote.getContent() : "");
+        localNote.setCategory(remoteNote.getCategory() != null ? remoteNote.getCategory() : "General");
+        
+        long ts = (remoteNote.getTimestamp() != null && remoteNote.getTimestamp() != 0) 
+                ? normalizeTimestamp(remoteNote.getTimestamp()) 
+                : System.currentTimeMillis();
+        localNote.setTimestamp(ts);
+        
+        long updatedTs = (remoteNote.getLastUpdated() != null && remoteNote.getLastUpdated() != 0) 
+                ? normalizeTimestamp(remoteNote.getLastUpdated()) 
+                : ts;
+        localNote.setLastUpdated(updatedTs);
+        
+        // Only set vault status if the server explicitly provides it
+        if (remoteNote.getVault() != null) {
+            localNote.setVault(remoteNote.isVault());
+        } else {
+            localNote.setVault(false);
+        }
+        
         localNote.setUserEmail(userEmail);
         localNote.setServerId(remoteNote.getId());
         localNote.setSyncStatus(SyncStatus.SUCCESS);
         return localNote;
     }
 
-    private void updateLocalNote(NotesModel localNote, NoteResponseDTO remoteNote) {
-        // Server already sends encrypted data
-        localNote.setTitle(remoteNote.getTitle());
-        localNote.setContent(remoteNote.getContent());
-        localNote.setCategory(remoteNote.getCategory());
-        localNote.setTimestamp(remoteNote.getTimestamp());
-        localNote.setVault(remoteNote.isVault());
-        localNote.setSyncStatus(SyncStatus.SUCCESS);
+    private boolean updateLocalNote(NotesModel localNote, NoteResponseDTO remoteNote) {
+        boolean changed = false;
+
+        try {
+            if (remoteNote.getTitle() != null && !Objects.equals(remoteNote.getTitle(), localNote.getTitle())) {
+                localNote.setTitle(remoteNote.getTitle());
+                changed = true;
+            }
+            if (remoteNote.getContent() != null && !Objects.equals(remoteNote.getContent(), localNote.getContent())) {
+                localNote.setContent(remoteNote.getContent());
+                changed = true;
+            }
+            if (remoteNote.getCategory() != null && !Objects.equals(remoteNote.getCategory(), localNote.getCategory())) {
+                localNote.setCategory(remoteNote.getCategory());
+                changed = true;
+            }
+            
+            if (remoteNote.getTimestamp() != null && remoteNote.getTimestamp() != 0) {
+                long remoteTs = normalizeTimestamp(remoteNote.getTimestamp());
+                // Only update if difference is more than 1 second to account for precision loss
+                if (Math.abs(localNote.getTimestamp() - remoteTs) > 1000) {
+                    localNote.setTimestamp(remoteTs);
+                    changed = true;
+                }
+            }
+            
+            if (remoteNote.getLastUpdated() != null && remoteNote.getLastUpdated() != 0) {
+                long remoteUpdated = normalizeTimestamp(remoteNote.getLastUpdated());
+                if (Math.abs(localNote.getLastUpdated() - remoteUpdated) > 1000) {
+                    localNote.setLastUpdated(remoteUpdated);
+                    changed = true;
+                }
+            }
+            
+            if (remoteNote.getVault() != null && remoteNote.isVault() != localNote.isVault()) {
+                localNote.setVault(remoteNote.isVault());
+                changed = true;
+            }
+
+            if (changed) {
+                localNote.setSyncStatus(SyncStatus.SUCCESS);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error during updateLocalNote: " + e.getMessage());
+            return false;
+        }
+        return changed;
+    }
+
+    private long normalizeTimestamp(long timestamp) {
+        // If it's in seconds (e.g. < 10^12), convert to milliseconds
+        return (timestamp < 1000000000000L) ? timestamp * 1000 : timestamp;
     }
 }

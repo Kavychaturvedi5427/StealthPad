@@ -74,6 +74,7 @@ public class CategoryNotesBottomSheet extends BottomSheetDialogFragment {
         titleView.setText(categoryName);
         
         NotesAdapter adapter = new NotesAdapter(R.layout.item_note_staggered);
+        adapter.setSortOrder(sessionManager.getSortOrder());
         adapter.setNotesListener(new NotesAdapter.NotesListener() {
             @Override
             public void onNoteClick(NotesModel note) {

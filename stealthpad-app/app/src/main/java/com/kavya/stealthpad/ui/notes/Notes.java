@@ -125,11 +125,15 @@ public class Notes extends AppCompatActivity {
                     // updating the ui based on the note that is fetched...
                     notestitle.setText(current.getTitle());
                     notesContent.setText(current.getContent());
-                    datetime.setText(DateTimeUtils.formatTimestamp(current.getTimestamp()));
+                    // In editor, show absolute creation time
+                    datetime.setText("Created " + DateTimeUtils.formatTimestamp(current.getTimestamp()));
                     
                     loadExistingAttachments(noteId);
                 }
             });
+        } else {
+            // Set current date for new notes
+            datetime.setText("Created " + DateTimeUtils.formatTimestamp(System.currentTimeMillis()));
         }
 
         observeState();
@@ -177,11 +181,20 @@ public class Notes extends AppCompatActivity {
             boolean isVault = getIntent().getBooleanExtra("IS_VAULT", false);
 
             if(isEditMode){
-                current.setTitle(title);
-                current.setContent(content);
-                current.setCategory(category);
-                current.setTimestamp(System.currentTimeMillis());
-                viewModel.updateNote(current);
+                boolean titleChanged = !title.equals(current.getTitle());
+                boolean contentChanged = !content.equals(current.getContent());
+                boolean categoryChanged = !java.util.Objects.equals(category, current.getCategory());
+
+                if (titleChanged || contentChanged || categoryChanged) {
+                    current.setTitle(title);
+                    current.setContent(content);
+                    current.setCategory(category);
+                    current.setLastUpdated(System.currentTimeMillis());
+                    viewModel.updateNote(current);
+                } else {
+                    // Even if not modified, we might want to finish or give feedback
+                    Toast.makeText(this, "No changes to save", Toast.LENGTH_SHORT).show();
+                }
             }
             else{
                 viewModel.validateNote(title, content, category, email, isVault, pendingAttachments);

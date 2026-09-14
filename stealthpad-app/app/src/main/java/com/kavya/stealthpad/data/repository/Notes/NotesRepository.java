@@ -56,6 +56,9 @@ public class NotesRepository {
         executor.execute(() -> {
             try {
                 model.setSyncStatus(SyncStatus.PENDING_CREATE);
+                if (model.getLastUpdated() == 0) {
+                    model.setLastUpdated(model.getTimestamp());
+                }
                 NotesModel encrypted = encrypt(model);
                 long noteId = dao.insert(encrypted);
                 
@@ -139,6 +142,37 @@ public class NotesRepository {
     public LiveData<List<NoteWithAttachments>> getRecentNotes(String email) {
         MediatorLiveData<List<NoteWithAttachments>> res = new MediatorLiveData<>();
         LiveData<List<NoteWithAttachments>> source = dao.getRecentNotesWithAttachments(email);
+
+        res.addSource(source, notes -> {
+            if (notes == null) {
+                res.postValue(new ArrayList<>());
+                return;
+            }
+            executor.execute(() -> {
+                res.postValue(decryptNotesWithAttachments(notes));
+            });
+        });
+        return res;
+    }
+
+    public LiveData<List<NoteWithAttachments>> getDashboardNotes(String email, String sortOrder) {
+        MediatorLiveData<List<NoteWithAttachments>> res = new MediatorLiveData<>();
+
+        LiveData<List<NoteWithAttachments>> source;
+        switch (sortOrder) {
+            case "NEWEST_CREATED":
+                source = dao.getNewestNotesWithAttachments(email);
+                break;
+            case "OLDEST_CREATED":
+                source = dao.getOldestNotesWithAttachments(email);
+                break;
+            case "ALPHABETICAL":
+                source = dao.getAlphabeticalNotesWithAttachments(email);
+                break;
+            default:
+                source = dao.getRecentNotesWithAttachments(email);
+                break;
+        }
 
         res.addSource(source, notes -> {
             if (notes == null) {
@@ -313,6 +347,7 @@ public class NotesRepository {
         model.setCategory(current.getCategory());
         model.setUserEmail(current.getUserEmail());
         model.setTimestamp(current.getTimestamp());
+        model.setLastUpdated(current.getLastUpdated());
         model.setVault(current.isVault());
 
         // IMPORTANT: preserve sync information
@@ -322,41 +357,43 @@ public class NotesRepository {
         return model;
     }
 
-    private NotesModel decrypt(NotesModel current) throws Exception {
+    private NotesModel decrypt(NotesModel current) {
+        try {
+            NotesModel model = new NotesModel();
 
-        NotesModel model = new NotesModel();
+            // Local Room ID
+            model.setId(current.getId());
 
-        // Local Room ID
-        model.setId(current.getId());
+            // Decrypt sensitive fields
+            model.setTitle(encryptionManager.decrypt(current.getTitle()));
+            model.setContent(encryptionManager.decrypt(current.getContent()));
 
-        // Decrypt sensitive fields
-        model.setTitle(encryptionManager.decrypt(current.getTitle()));
-        model.setContent(encryptionManager.decrypt(current.getContent()));
+            // Non-sensitive fields
+            model.setCategory(current.getCategory());
+            model.setUserEmail(current.getUserEmail());
+            model.setTimestamp(current.getTimestamp());
+            model.setLastUpdated(current.getLastUpdated());
+            model.setVault(current.isVault());
 
-        // Non-sensitive fields
-        model.setCategory(current.getCategory());
-        model.setUserEmail(current.getUserEmail());
-        model.setTimestamp(current.getTimestamp());
-        model.setVault(current.isVault());
+            // IMPORTANT: preserve sync information
+            model.setSyncStatus(current.getSyncStatus());
+            model.setServerId(current.getServerId());
 
-        // IMPORTANT: preserve sync information
-        model.setSyncStatus(current.getSyncStatus());
-        model.setServerId(current.getServerId());
-
-        return model;
+            return model;
+        } catch (Exception e) {
+            // If decryption fails (e.g. data not encrypted yet or key mismatch), 
+            // return the note as-is so it doesn't disappear from the UI.
+            return current;
+        }
     }
 
     private List<NoteWithAttachments> decryptNotesWithAttachments(List<NoteWithAttachments> notes) {
         List<NoteWithAttachments> decrypted = new ArrayList<>();
         for (NoteWithAttachments item : notes) {
-            try {
-                NoteWithAttachments decryptedItem = new NoteWithAttachments();
-                decryptedItem.note = decrypt(item.note);
-                decryptedItem.attachments = item.attachments;
-                decrypted.add(decryptedItem);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            NoteWithAttachments decryptedItem = new NoteWithAttachments();
+            decryptedItem.note = decrypt(item.note);
+            decryptedItem.attachments = item.attachments;
+            decrypted.add(decryptedItem);
         }
         return decrypted;
     }
@@ -364,11 +401,7 @@ public class NotesRepository {
     private List<NotesModel> decryptNotes(List<NotesModel> notes) {
         List<NotesModel> decryptedRecentNote = new ArrayList<>();
         for (NotesModel note : notes) {
-            try {
-                decryptedRecentNote.add(decrypt(note));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            decryptedRecentNote.add(decrypt(note));
         }
         return decryptedRecentNote;
     }

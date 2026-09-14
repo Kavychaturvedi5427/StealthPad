@@ -63,7 +63,7 @@ public class AiActionBottomSheet extends BottomSheetDialogFragment {
     private ImageView mascotImg;
     private TextView headerTitle, headerSubtitle, charCountText, resultHeader;
     private TextInputEditText inputEdit;
-    private MaterialButton actionBtn, copyBtn, useNoteBtn, retryBtn;
+    private MaterialButton actionBtn, copyBtn, useNoteBtn, retryBtn, selectNoteBtn;
     private View resultContainer, textResultCard;
     private TextView resultTextView;
     private LinearLayout keyPointsList;
@@ -112,6 +112,7 @@ public class AiActionBottomSheet extends BottomSheetDialogFragment {
         copyBtn = view.findViewById(R.id.btn_copy_result);
         useNoteBtn = view.findViewById(R.id.btn_use_note);
         retryBtn = view.findViewById(R.id.btn_retry);
+        selectNoteBtn = view.findViewById(R.id.btn_select_note);
         resultContainer = view.findViewById(R.id.container_ai_result);
         textResultCard = view.findViewById(R.id.card_text_result);
         resultTextView = view.findViewById(R.id.text_ai_result);
@@ -133,6 +134,7 @@ public class AiActionBottomSheet extends BottomSheetDialogFragment {
                 inputTypeLabel.setText("Your note");
                 inputTypeIcon.setImageResource(R.drawable.category); // Fallback
                 actionBtn.setText("✨ Summarize with Stealth AI");
+                selectNoteBtn.setVisibility(View.VISIBLE);
                 addSuggestions(new String[]{"Meeting notes", "Long article", "Study notes"});
                 break;
             case GENERATE:
@@ -142,6 +144,7 @@ public class AiActionBottomSheet extends BottomSheetDialogFragment {
                 inputTypeIcon.setImageResource(R.drawable.ic_ai);
                 actionBtn.setText("✨ Create Note");
                 inputEdit.setHint("e.g. Create study notes about the solar system...");
+                selectNoteBtn.setVisibility(View.GONE);
                 addSuggestions(new String[]{"Study notes", "Meeting summary", "Project plan", "To-do list"});
                 break;
             case KEY_POINTS:
@@ -150,6 +153,7 @@ public class AiActionBottomSheet extends BottomSheetDialogFragment {
                 inputTypeLabel.setText("Your note");
                 inputTypeIcon.setImageResource(R.drawable.ic_star);
                 actionBtn.setText("✨ Extract Key Points");
+                selectNoteBtn.setVisibility(View.VISIBLE);
                 addSuggestions(new String[]{"Main ideas", "Important facts", "Study revision"});
                 break;
         }
@@ -187,6 +191,8 @@ public class AiActionBottomSheet extends BottomSheetDialogFragment {
 
         actionBtn.setOnClickListener(v -> performAiAction());
         retryBtn.setOnClickListener(v -> performAiAction());
+        
+        selectNoteBtn.setOnClickListener(v -> showNotePicker());
 
         copyBtn.setOnClickListener(v -> copyToClipboard());
         copyBtn.setIconResource(R.drawable.accsetting); // Temporary placeholder icon
@@ -222,6 +228,15 @@ public class AiActionBottomSheet extends BottomSheetDialogFragment {
             case GENERATE: aiViewModel.generate(text); break;
             case KEY_POINTS: aiViewModel.keyPoints(text); break;
         }
+    }
+
+    private void showNotePicker() {
+        NotePickerBottomSheet picker = new NotePickerBottomSheet();
+        picker.setOnNotePickedListener(note -> {
+            inputEdit.setText(note.getContent());
+            Toast.makeText(requireContext(), "Imported: " + note.getTitle(), Toast.LENGTH_SHORT).show();
+        });
+        picker.show(getChildFragmentManager(), "NOTE_PICKER");
     }
 
     private void expandBottomSheet() {

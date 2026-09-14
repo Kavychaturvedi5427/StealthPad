@@ -35,7 +35,9 @@ public class NotesViewModel extends ViewModel {
             notesState.setValue(new NotesState.ErrorState("Title can't be empty."));
             return;
         }
-        NotesModel model = new NotesModel(title, content, System.currentTimeMillis(), category, email);
+        long now = System.currentTimeMillis();
+        NotesModel model = new NotesModel(title, content, now, category, email);
+        model.setLastUpdated(now);
         model.setVault(isVault);
         repo.saveNote(model, attachments, new NotesRepository.SavenotesCallback() {
             @Override
@@ -72,6 +74,10 @@ public class NotesViewModel extends ViewModel {
 
     public LiveData<List<NoteWithAttachments>> getRecentNotes(String email){
         return repo.getRecentNotes(email);
+    }
+
+    public LiveData<List<NoteWithAttachments>> getDashboardNotes(String email, String sortOrder) {
+        return repo.getDashboardNotes(email, sortOrder);
     }
 
     public LiveData<List<NoteWithAttachments>> getVaultNotes(String email){

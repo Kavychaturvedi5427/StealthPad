@@ -55,6 +55,7 @@ dependencies {
 
     // WorkManager
     implementation(libs.work.runtime)
+    implementation(libs.guava)
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.60.1")
@@ -102,4 +103,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // Google AdMob
+    implementation("com.google.android.gms:play-services-ads:25.2.0")
 }

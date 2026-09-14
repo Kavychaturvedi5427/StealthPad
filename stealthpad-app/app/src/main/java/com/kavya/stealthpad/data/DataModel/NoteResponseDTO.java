@@ -1,9 +1,21 @@
 package com.kavya.stealthpad.data.DataModel;
 
+import com.google.gson.annotations.SerializedName;
+
 public class NoteResponseDTO {
     private Long id;
-
     private String title;
+    private String content;
+    private String category;
+    
+    @SerializedName("timestamp")
+    private Long timestamp;
+    
+    @SerializedName("updated_at")
+    private Long lastUpdated;
+
+    @SerializedName("is_vault")
+    private Boolean vault;
 
     public Long getId() {
         return id;
@@ -37,27 +49,31 @@ public class NoteResponseDTO {
         this.category = category;
     }
 
-    public long getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
-    private String content;
-
-    private String category;
-
-    private long timestamp;
-
-    private boolean isVault;
-
-    public boolean isVault() {
-        return isVault;
+    public Long getLastUpdated() {
+        return lastUpdated;
     }
 
-    public void setVault(boolean vault) {
-        isVault = vault;
+    public void setLastUpdated(Long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public Boolean getVault() {
+        return vault;
+    }
+
+    public void setVault(Boolean vault) {
+        this.vault = vault;
+    }
+    
+    public boolean isVault() {
+        return vault != null && vault;
     }
 }

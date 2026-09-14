@@ -13,6 +13,11 @@ public class SessionManager {
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
+    private String getUserKey(String key) {
+        String email = getEmail();
+        return (email != null) ? key + "_" + email : key;
+    }
+
     // storing the data in the temporary storage...
     public void saveUser(String jwt, String name, String email) {
         prefs.edit()
@@ -52,63 +57,63 @@ public class SessionManager {
 
     // Vault methods
     public boolean isVaultSetup() {
-        return prefs.getBoolean("vault_setup", false);
+        return prefs.getBoolean(getUserKey("vault_setup"), false);
     }
 
     public void setVaultSetup(boolean setup) {
-        prefs.edit().putBoolean("vault_setup", setup).apply();
+        prefs.edit().putBoolean(getUserKey("vault_setup"), setup).apply();
     }
 
     public String getVaultPin() {
-        return prefs.getString("vault_pin", null);
+        return prefs.getString(getUserKey("vault_pin"), null);
     }
 
     public void setVaultPin(String pin) {
-        prefs.edit().putString("vault_pin", pin).apply();
+        prefs.edit().putString(getUserKey("vault_pin"), pin).apply();
     }
 
     public boolean isBiometricEnabled() {
-        return prefs.getBoolean("biometric_enabled", false);
+        return prefs.getBoolean(getUserKey("biometric_enabled"), false);
     }
 
     public void setBiometricEnabled(boolean enabled) {
-        prefs.edit().putBoolean("biometric_enabled", enabled).apply();
+        prefs.edit().putBoolean(getUserKey("biometric_enabled"), enabled).apply();
     }
 
     // Theme methods
     public int getThemeMode() {
-        return prefs.getInt("theme_mode", 0); // 0: System, 1: Light, 2: Dark
+        return prefs.getInt(getUserKey("theme_mode"), 0); // 0: System, 1: Light, 2: Dark
     }
 
     public void setThemeMode(int mode) {
-        prefs.edit().putInt("theme_mode", mode).apply();
+        prefs.edit().putInt(getUserKey("theme_mode"), mode).apply();
     }
 
     // Auto Lock methods
     public int getAutoLockMinutes() {
-        return prefs.getInt("auto_lock_minutes", 0); // 0: Immediately, 1, 5, 15
+        return prefs.getInt(getUserKey("auto_lock_minutes"), 0); // 0: Immediately, 1, 5, 15
     }
 
     public void setAutoLockMinutes(int minutes) {
-        prefs.edit().putInt("auto_lock_minutes", minutes).apply();
+        prefs.edit().putInt(getUserKey("auto_lock_minutes"), minutes).apply();
     }
 
     // Sorting methods
     public String getSortOrder() {
-        return prefs.getString("sort_order", "RECENTLY_UPDATED");
+        return prefs.getString(getUserKey("sort_order"), "RECENTLY_UPDATED");
     }
 
     public void setSortOrder(String sortOrder) {
-        prefs.edit().putString("sort_order", sortOrder).apply();
+        prefs.edit().putString(getUserKey("sort_order"), sortOrder).apply();
     }
 
     // Default Category methods
     public String getDefaultCategory() {
-        return prefs.getString("default_category", "Personal");
+        return prefs.getString(getUserKey("default_category"), "Personal");
     }
 
     public void setDefaultCategory(String category) {
-        prefs.edit().putString("default_category", category).apply();
+        prefs.edit().putString(getUserKey("default_category"), category).apply();
     }
 
     public boolean isLoggingOut() {
@@ -120,11 +125,11 @@ public class SessionManager {
     }
 
     public long getLastVaultUnlockTime() {
-        return prefs.getLong("last_vault_unlock_time", 0);
+        return prefs.getLong(getUserKey("last_vault_unlock_time"), 0);
     }
 
     public void setLastVaultUnlockTime(long time) {
-        prefs.edit().putLong("last_vault_unlock_time", time).apply();
+        prefs.edit().putLong(getUserKey("last_vault_unlock_time"), time).apply();
     }
 
     public void saveCredentials(String email, String encryptedPass) {

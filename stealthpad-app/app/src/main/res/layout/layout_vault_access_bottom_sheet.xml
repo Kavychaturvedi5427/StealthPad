@@ -155,7 +155,7 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconSize="24dp"
-                app:iconTint="@color/profile_text_primary" />
+                app:iconTint="@color/warm_text" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/VaultKeypadButton"
@@ -168,7 +168,7 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconSize="22dp"
-                app:iconTint="@color/profile_text_primary" />
+                app:iconTint="@color/warm_text" />
 
         </GridLayout>
 

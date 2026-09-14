@@ -31,9 +31,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     private List<NoteWithAttachments> notes = new ArrayList<>();
     private final int layoutId;
     private NotesListener listener;
+    private String sortOrder = "RECENTLY_UPDATED";
 
     public NotesAdapter(int id){
         this.layoutId = id;
+    }
+
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+        notifyDataSetChanged();
     }
 
     public void setNotesListener(NotesListener listener) {
@@ -61,8 +67,23 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         
         holder.title.setText(note.getTitle());
         holder.preview.setText(note.getContent());
-        holder.date.setText(DateTimeUtils.formatTimestamp(note.getTimestamp()));
+        
+        // Determine which timestamp and label to use based on sort order
+        if ("RECENTLY_UPDATED".equals(sortOrder)) {
+            // Use updatedAt (with createdAt fallback) and human-friendly relative formatting
+            holder.date.setText(DateTimeUtils.formatRelativeTime(note.getLastUpdated(), "Updated"));
+        } else if ("OLDEST_CREATED".equals(sortOrder) || "NEWEST_CREATED".equals(sortOrder)) {
+            // For creation-based sorts, show creation date
+            holder.date.setText(DateTimeUtils.formatRelativeTime(note.getTimestamp(), "Created"));
+        } else {
+            // Default fallback
+            holder.date.setText(DateTimeUtils.formatRelativeTime(note.getLastUpdated(), "Updated"));
+        }
+
         holder.category.setText(note.getCategory());
+        if (holder.folderTag != null) {
+            holder.folderTag.setText(note.getCategory() != null ? note.getCategory().toUpperCase() : "GENERAL");
+        }
 
         if (noteWithAttachments.attachments != null && !noteWithAttachments.attachments.isEmpty()) {
             String path = noteWithAttachments.attachments.get(0).getLocalPath();
@@ -114,6 +135,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         TextView preview;
         TextView date;
         TextView category;
+        TextView folderTag;
         ImageView imagePreview;
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -121,6 +143,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             this.preview = itemView.findViewById(R.id.note_content);
             this.date = itemView.findViewById(R.id.note_date);
             this.category = itemView.findViewById(R.id.category_chip);
+            this.folderTag = itemView.findViewById(R.id.folder_tag);
             this.imagePreview = itemView.findViewById(R.id.note_image_preview);
         }
     }

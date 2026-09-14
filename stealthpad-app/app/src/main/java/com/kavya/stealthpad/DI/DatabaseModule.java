@@ -41,7 +41,7 @@ public class DatabaseModule {
                         RoomDBSetup.class,
                         RoomDBSetup.DB_NAME
                 )
-                .addMigrations(MIGRATION_3_4, RoomDBSetup.MIGRATION_4_5)
+                .addMigrations(MIGRATION_3_4, RoomDBSetup.MIGRATION_4_5, RoomDBSetup.MIGRATION_5_6)
                 .fallbackToDestructiveMigration()
                 .build();
     }
