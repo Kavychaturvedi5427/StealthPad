@@ -34,6 +34,7 @@ public class ProfileDialog extends DialogFragment {
     SessionManager sessionManager;
 
     private AuthViewModel authViewModel;
+    private View loadingIndicator;
 
     @Nullable
     @Override
@@ -48,6 +49,7 @@ public class ProfileDialog extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+        loadingIndicator = view.findViewById(R.id.loading_indicator);
         TextView username = view.findViewById(R.id.text_full_name);
         TextView emailText = view.findViewById(R.id.text_email);
 
@@ -103,18 +105,21 @@ public class ProfileDialog extends DialogFragment {
     private void observeAuthState() {
         authViewModel.getAuthState().observe(getViewLifecycleOwner(), state -> {
             if (state instanceof AuthState.Loading) {
-                // Could show a progress bar if layout had one
+                if (loadingIndicator != null) loadingIndicator.setVisibility(View.VISIBLE);
             } else if (state instanceof AuthState.ForgotPassSuccess) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(View.GONE);
                 String userEmail = sessionManager.getEmail();
                 dismiss();
                 ResetPasswordDialog resetDialog = ResetPasswordDialog.newInstance(userEmail);
                 resetDialog.show(getParentFragmentManager(), "ResetPasswordDialog");
                 authViewModel.resetState();
             } else if (state instanceof AuthState.DeleteAccountSuccess) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(View.GONE);
                 Toast.makeText(requireContext(), "Account deleted successfully", Toast.LENGTH_SHORT).show();
                 performLogout();
                 authViewModel.resetState();
             } else if (state instanceof AuthState.Error) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(View.GONE);
                 Toast.makeText(requireContext(), ((AuthState.Error) state).getError(), Toast.LENGTH_SHORT).show();
                 authViewModel.resetState();
             }

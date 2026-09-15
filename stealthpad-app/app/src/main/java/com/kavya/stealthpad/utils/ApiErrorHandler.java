@@ -52,9 +52,11 @@ public class ApiErrorHandler {
 
         switch (code) {
             case 401:
-                sessionManager.logout();
-                message = "Session expired. Please login again.";
-                break;
+                // We don't logout automatically here because some 401s (like login failure)
+                // should not trigger a global logout state change in the app.
+                // The ViewModel will decide based on the context.
+                message = "Invalid credentials or session expired.";
+                return new ApiError(code, message, true);
             case 403:
                 message = "You don't have permission to perform this action.";
                 break;

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.kavya.stealthpad.R;
 import com.kavya.stealthpad.ViewModel.AuthViewModel.AuthState;
@@ -212,14 +215,36 @@ public class DashboardActivity extends AppCompatActivity {
                 params.width = (int) (48 * getResources().getDisplayMetrics().density);
                 params.height = (int) (48 * getResources().getDisplayMetrics().density);
                 authbtn.setLayoutParams(params);
-                
+
                 authimg.setVisibility(View.GONE);
                 authbtnLottie.setVisibility(View.VISIBLE);
 
                 binding.adContainer.setVisibility(View.VISIBLE);
 
                 if (!adLoaded) {
+
                     AdRequest adRequest = new AdRequest.Builder().build();
+
+                    binding.adView.setAdListener(new AdListener() {
+
+                        @Override
+                        public void onAdLoaded() {
+                            super.onAdLoaded();
+                            Log.d("ADMOB", "Real ad loaded successfully");
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@NonNull LoadAdError adError) {
+                            super.onAdFailedToLoad(adError);
+
+                            Log.e(
+                                    "ADMOB",
+                                    "Ad failed: code=" + adError.getCode()
+                                            + ", message=" + adError.getMessage()
+                            );
+                        }
+                    });
+
                     binding.adView.loadAd(adRequest);
                     adLoaded = true;
                 }
@@ -233,7 +258,7 @@ public class DashboardActivity extends AppCompatActivity {
                 authbtn.setLayoutParams(params);
 
                 binding.adContainer.setVisibility(View.GONE);
-                
+
                 greetingText.setText(getGreeting() + "User");
                 adapterRecentNotes.setNotes(new ArrayList<>());
                 adapterRecentNotes.notifyDataSetChanged();
@@ -241,7 +266,7 @@ public class DashboardActivity extends AppCompatActivity {
                 authimg.setImageResource(R.drawable.logo);
                 authimg.setPadding(0, 0, 0, 0); // Remove padding to make logo occupy full space
                 authbtnLottie.setVisibility(View.GONE);
-                
+
                 emptyStateAnimation.setVisibility(View.VISIBLE);
                 emptyStateAnimation.setAnimation(R.raw.login);
                 empty_txt.setVisibility(View.VISIBLE);

@@ -35,6 +35,7 @@ public class ManageAccountActivity extends AppCompatActivity {
     AttachmentStorageManager storageManager;
 
     private AuthViewModel authViewModel;
+    private android.view.View loadingIndicator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class ManageAccountActivity extends AppCompatActivity {
         });
 
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        loadingIndicator = findViewById(R.id.loading_indicator);
 
         // Account Information
         TextView nameText = findViewById(R.id.info_name);
@@ -106,12 +108,16 @@ public class ManageAccountActivity extends AppCompatActivity {
 
     private void observeAuthState() {
         authViewModel.getAuthState().observe(this, state -> {
-            if (state instanceof AuthState.ForgotPassSuccess) {
+            if (state instanceof AuthState.Loading) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(android.view.View.VISIBLE);
+            } else if (state instanceof AuthState.ForgotPassSuccess) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(android.view.View.GONE);
                 String userEmail = sessionManager.getEmail();
                 ResetPasswordDialog resetDialog = ResetPasswordDialog.newInstance(userEmail);
                 resetDialog.show(getSupportFragmentManager(), "ResetPasswordDialog");
                 authViewModel.resetState();
             } else if (state instanceof AuthState.DeleteAccountSuccess) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(android.view.View.GONE);
                 Toast.makeText(this, "Account deleted successfully", Toast.LENGTH_SHORT).show();
                 
                 String userEmail = sessionManager.getEmail();
@@ -123,9 +129,11 @@ public class ManageAccountActivity extends AppCompatActivity {
                 performLogout();
                 authViewModel.resetState();
             } else if (state instanceof AuthState.Error) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(android.view.View.GONE);
                 Toast.makeText(this, ((AuthState.Error) state).getError(), Toast.LENGTH_SHORT).show();
                 authViewModel.resetState();
             } else if (state instanceof AuthState.LoggedOut) {
+                if (loadingIndicator != null) loadingIndicator.setVisibility(android.view.View.GONE);
                 performLogout();
             }
         });

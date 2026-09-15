@@ -49,7 +49,7 @@ public class AuthViewModel extends ViewModel {
                 }
                 else{
                     ApiError apiError = errorHandler.handleError(response);
-                    // Special handling for login: 401 should just show an error, not logout
+                    // Special handling for login: Even if 401, we just want to show error
                     if (apiError.getStatusCode() == 401) {
                         authState.setValue(new AuthState.Error("Invalid email or password"));
                     } else {
@@ -97,7 +97,7 @@ public class AuthViewModel extends ViewModel {
                     authState.setValue(new AuthState.ForgotPassSuccess(response.body() != null ? response.body() : "OTP sent successfully"));
                 } else {
                     ApiError apiError = errorHandler.handleError(response);
-                    if (apiError.getStatusCode() == 401) {
+                    if (apiError.isShouldLogout()) {
                         authState.setValue(new AuthState.LoggedOut());
                     } else {
                         authState.setValue(new AuthState.Error(apiError.getMessage()));
@@ -123,7 +123,7 @@ public class AuthViewModel extends ViewModel {
                     authState.setValue(new AuthState.ResetPassSuccess(response.body() != null ? response.body() : "Password reset successful"));
                 } else {
                     ApiError apiError = errorHandler.handleError(response);
-                    if (apiError.getStatusCode() == 401) {
+                    if (apiError.isShouldLogout()) {
                         authState.setValue(new AuthState.LoggedOut());
                     } else {
                         authState.setValue(new AuthState.Error(apiError.getMessage()));
@@ -148,7 +148,7 @@ public class AuthViewModel extends ViewModel {
                     authState.setValue(new AuthState.DeleteAccountSuccess(response.body() != null ? response.body() : "Account deleted successfully"));
                 } else {
                     ApiError apiError = errorHandler.handleError(response);
-                    if (apiError.getStatusCode() == 401) {
+                    if (apiError.isShouldLogout()) {
                         authState.setValue(new AuthState.LoggedOut());
                     } else {
                         authState.setValue(new AuthState.Error(apiError.getMessage()));

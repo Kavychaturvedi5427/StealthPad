@@ -73,29 +73,29 @@ public class SessionManager {
     }
 
     public boolean isBiometricEnabled() {
-        return prefs.getBoolean(getUserKey("biometric_enabled"), false);
+        return prefs.getBoolean("biometric_enabled", false);
     }
 
     public void setBiometricEnabled(boolean enabled) {
-        prefs.edit().putBoolean(getUserKey("biometric_enabled"), enabled).apply();
+        prefs.edit().putBoolean("biometric_enabled", enabled).apply();
     }
 
     // Theme methods
     public int getThemeMode() {
-        return prefs.getInt(getUserKey("theme_mode"), 0); // 0: System, 1: Light, 2: Dark
+        return prefs.getInt("theme_mode", 0); // 0: System, 1: Light, 2: Dark
     }
 
     public void setThemeMode(int mode) {
-        prefs.edit().putInt(getUserKey("theme_mode"), mode).apply();
+        prefs.edit().putInt("theme_mode", mode).apply();
     }
 
     // Auto Lock methods
     public int getAutoLockMinutes() {
-        return prefs.getInt(getUserKey("auto_lock_minutes"), 0); // 0: Immediately, 1, 5, 15
+        return prefs.getInt("auto_lock_minutes", 0); // 0: Immediately, 1, 5, 15
     }
 
     public void setAutoLockMinutes(int minutes) {
-        prefs.edit().putInt(getUserKey("auto_lock_minutes"), minutes).apply();
+        prefs.edit().putInt("auto_lock_minutes", minutes).apply();
     }
 
     // Sorting methods

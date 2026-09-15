@@ -28,10 +28,12 @@ public class EncryptionManager {
     public String decrypt(String strToDecrypt) {
         if (strToDecrypt == null || strToDecrypt.isEmpty()) return strToDecrypt;
         try {
-            return helper.decrypt(strToDecrypt);
+            String decrypted = helper.decrypt(strToDecrypt);
+            return (decrypted != null) ? decrypted : strToDecrypt;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            // If decryption fails, it might not be encrypted or the key is different.
+            // Return as-is so data isn't lost in the UI.
+            return strToDecrypt;
         }
     }
 }

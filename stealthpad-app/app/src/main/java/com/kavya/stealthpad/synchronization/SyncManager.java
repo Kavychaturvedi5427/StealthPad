@@ -288,8 +288,10 @@ public class SyncManager {
         request.setTitle(note.getTitle());
         request.setContent(note.getContent());
         request.setCategory(note.getCategory());
+        
         request.setTimestamp(note.getTimestamp());
         request.setLastUpdated(note.getLastUpdated());
+
         request.setVault(note.isVault());
         return request;
     }
