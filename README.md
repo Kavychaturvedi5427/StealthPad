@@ -208,34 +208,31 @@ The Android module has additional build and feature details in [stealthpad-app/R
 
 ## Screenshots
 
-Screenshots will be added here later.
+### Dashboard and Notes
 
-<!--
-Suggested screenshot locations:
+| Dashboard | Note Creation |
+| --- | --- |
+| <img src="assets/Dashboard.png" alt="StealthPad dashboard" width="220" height="400"> | <img src="assets/note%20creartion.png" alt="Note creation screen" width="220" height="400"> |
 
-docs/screenshots/home.png
-docs/screenshots/note-editor.png
-docs/screenshots/vault.png
-docs/screenshots/stealth-ai.png
-docs/screenshots/settings.png
+### Vault
 
-Example Markdown:
+| Vault Access | Vault Notes |
+| --- | --- |
+| <img src="assets/vaultaccess.png" alt="Vault access screen" width="220" height="400"> | <img src="assets/vault.png" alt="Vault screen" width="220" height="400"> |
 
-![StealthPad home screen](docs/screenshots/home.png)
-![StealthPad note editor](docs/screenshots/note-editor.png)
--->
+### Stealth AI
 
-## App Video
+| AI Note Creation | Stealth AI |
+| --- | --- |
+| <img src="assets/AiNoteCreation.png" alt="AI note creation" width="220" height="400"> | <img src="assets/StealthAi.png" alt="Stealth AI screen" width="220" height="400"> |
 
-An application walkthrough video will be added here later.
+| Summarization | Key Points |
+| --- | --- |
+| <img src="assets/summarize.png" alt="AI summarization" width="220" height="400"> | <img src="assets/keypoints.png" alt="AI key points" width="220" height="400"> |
 
-<!--
-Replace VIDEO_URL with the final hosted video URL:
+### Account Management
 
-[Watch the StealthPad app demo](VIDEO_URL)
-
-For large files, use a hosted video platform or release asset instead of committing the video directly to the repository.
--->
+<img src="assets/manageaccout.png" alt="Manage account screen" width="220" height="400">
 
 ## Prerequisites
 
