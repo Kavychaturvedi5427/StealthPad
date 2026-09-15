@@ -65,6 +65,9 @@ public class ApiErrorHandler {
                     message = "Requested resource was not found.";
                 }
                 break;
+            case 429:
+                message = "AI request limit reached. Please try again later.";
+                break;
             case 500:
                 message = "Something went wrong on the server. Please try again.";
                 break;
