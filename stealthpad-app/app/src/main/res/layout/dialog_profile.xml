@@ -235,6 +235,16 @@
                         app:iconGravity="textStart"
                         app:iconPadding="10dp" />
 
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/loading_indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone"
+                        app:indicatorColor="@color/warm_accent"
+                        android:indeterminate="true" />
+
                 </LinearLayout>
             </ScrollView>
         </LinearLayout>
