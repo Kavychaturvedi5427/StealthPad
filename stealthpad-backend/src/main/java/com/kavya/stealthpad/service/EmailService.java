@@ -26,15 +26,14 @@ public class EmailService {
         Context context = new Context();
         context.setVariable("otp", otp);
 
-        String htmlContent =
-                templateEngine.process("forgot-password", context);
+        String htmlContent = templateEngine.process("forgot-password", context);
 
         try {
 
             Resend resend = new Resend(resendApiKey);
 
             CreateEmailOptions params = CreateEmailOptions.builder()
-                    .from("onboarding@resend.dev")
+                    .from("StealthPad <noreply@stealthpad.kavyadev.in>")
                     .to(email)
                     .subject("StealthPad Password Reset")
                     .html(htmlContent)
@@ -45,8 +44,7 @@ public class EmailService {
         } catch (ResendException e) {
 
             throw new RuntimeException(
-                    "Unable to send password reset email", e
-            );
+                    "Unable to send password reset email", e);
         }
     }
 }
