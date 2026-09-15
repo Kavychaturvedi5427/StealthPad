@@ -55,6 +55,7 @@ public class Notes extends AppCompatActivity {
     private NotesModel current;
     private boolean isEditMode = false;
     private boolean isSaved = false;
+    private boolean attachmentsChanged = false;
     private CircularProgressIndicator progressBar;
 
     private AttachmentAdapter attachmentAdapter;
@@ -81,6 +82,7 @@ public class Notes extends AppCompatActivity {
                             
                             if (isEditMode && noteId != -1) {
                                 viewModel.addAttachment(attachment);
+                                attachmentsChanged = true;
                             } else {
                                 pendingAttachments.add(attachment);
                                 updateAttachmentVisibility();
@@ -185,12 +187,13 @@ public class Notes extends AppCompatActivity {
                 boolean contentChanged = !content.equals(current.getContent());
                 boolean categoryChanged = !java.util.Objects.equals(category, current.getCategory());
 
-                if (titleChanged || contentChanged || categoryChanged) {
+                if (titleChanged || contentChanged || categoryChanged || attachmentsChanged) {
                     current.setTitle(title);
                     current.setContent(content);
                     current.setCategory(category);
                     current.setLastUpdated(System.currentTimeMillis());
                     viewModel.updateNote(current);
+                    attachmentsChanged = false;
                 } else {
                     // Even if not modified, we might want to finish or give feedback
                     Toast.makeText(this, "No changes to save", Toast.LENGTH_SHORT).show();
@@ -251,6 +254,7 @@ public class Notes extends AppCompatActivity {
             public void onRemoveAttachment(NoteAttachment attachment) {
                 if (isEditMode) {
                     viewModel.deleteAttachment(attachment);
+                    attachmentsChanged = true;
                 } else {
                     pendingAttachments.remove(attachment);
                     attachmentAdapter.setAttachments(pendingAttachments);
