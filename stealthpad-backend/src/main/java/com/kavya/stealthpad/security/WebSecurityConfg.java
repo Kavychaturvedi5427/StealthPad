@@ -23,8 +23,8 @@ public class WebSecurityConfg {
        http.csrf(csrfconfig -> csrfconfig.disable())
                             .sessionManagement(sessionConfig ->
                             sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                            .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
-                            .permitAll()
+                            .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/api/health").permitAll()
                             .anyRequest().authenticated())
                             .exceptionHandling(exceptions -> exceptions
                             .authenticationEntryPoint(securityErrorHandler)
