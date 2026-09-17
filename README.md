@@ -458,4 +458,4 @@ Potential future improvements include:
 
 ## License
 
-No license file is currently included in the repository. Add a license before distributing the project under a specific open-source license.
+StealthPad is released under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for the complete terms and copyright notice.
